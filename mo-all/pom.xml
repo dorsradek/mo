@@ -10,5 +10,6 @@
 	
 	<modules>
 		<module>../mo-app</module>
+		<module>../mo-lib</module>
 	</modules>
 </project>
