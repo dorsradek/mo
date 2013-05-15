@@ -20,19 +20,19 @@ public class ConfigurationData
 	 * czy podejmowane ruchy respektuja tablice zabronien wygenerowana przez
 	 * algorytm naprawy
 	 */
-	private boolean isMovementsLookOnReapirsTaboos;
+	private boolean isMovementsLookOnRepairsTaboos;
 
 	/**
 	 * wpolczynnik okresla na jak dlugo dany ruch pozostaje na liscie Taboo.
 	 * calkowita liczba iteracji zalezy rowniez od tego jak bardzo polepszyla
-	 * sie funckcja celu
+	 * sie funkcja celu
 	 */
 	private float movementTabooRatio;
 
 	/**
 	 * wpolczynnik okresla na jak dlugo dany ruch NAPRAWY pozostaje na liscie
 	 * Taboo. calkowita liczba iteracji zalezy rowniez od tego jak bardzo
-	 * polepszyla sie funckcja celu
+	 * polepszyla sie funkcja celu
 	 */
 	private float reapirTabooRatio;
 

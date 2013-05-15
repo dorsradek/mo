@@ -7,14 +7,32 @@ import pl.eit.mo.dto.complex.ConfigurationData;
 /**
  * Glowna klasa dostarczajaca interfejs do biblioteki rozdzielajacej pracownikow
  * do projektow
+ * 
+ * 
+ * 1. dodac kryteria aspiracji
+ * 2. jak zadziala walidator? na wybranym wierszu czy calosci? a moze do wybranego ?
+ * 3. najpierw udostepniam rozw wygenerowane jako wejsciowe zeby mozna bylo go wiecej razy uzyc
+ * 	  czyli program zapewnia tylko jedna petle dla jednego wejsciowego
+ * 4. na koncu przesylam wyniki -> wszystkie rozw (tylko dochod) + najlepsze rozwiazanie
+ * 5. zabronienia trzymam w mapie - key = kod ruchu, value - string ktory potrafi sparsowac 
+ *    ruch ktorego ono dotyczny
+ * 6. oczywiscie tworze obiekt tej klasy i na nim to wolam
+ * 7. lepiej zostaw Radkowi konfigurowanie pobierania ruchow i algorytmow naprawy z fabryk
+ *    udostepnij mu tylko fabryki
+ * 8. wiec przerob configuration data -> wywal fabryki na zewnatrz 
+ * 9. Kryt aspiracji wtedy gdy nie moze znalezc ruchu -> bierze ruch z tabluicy zabronien 
+ *    i go wykonuje
+ * 10. dodaj mozliwosc zwrocenia macierzy wyjsciowej tak aby mozna bylo ja ustawic jako wejsciowa
+ * 	   dla kolejnych iteracji 
  */
+
 
 public class HRAllocator {
 	
 	/** lista z algorytmami naprawy */
 	private List<IRepairAlgorithm> repairAlgorithms;
 	
-	/** aktywna */
+	/** aktywna funkcja celu */
 	private IGoalFunction goalFunction;
 	
 	/** lista ruchow */
