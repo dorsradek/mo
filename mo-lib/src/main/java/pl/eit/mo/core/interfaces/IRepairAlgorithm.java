@@ -1,5 +1,8 @@
 package pl.eit.mo.core.interfaces;
 
+import pl.eit.mo.core.others.DaySchedule;
+
+
 public abstract class IRepairAlgorithm {
 
 	/** nazwa algorytmu naprawy (unikalna) */
@@ -14,7 +17,7 @@ public abstract class IRepairAlgorithm {
 	/** liczba prob naprawy kazdej kolumny */
 	private int numberOfRepairsProbes;
 
-	
+	public abstract void excecute(DaySchedule daySchedule);
 	
 	public boolean isUseTaboos() {
 		return isUseTaboos;
@@ -43,6 +46,5 @@ public abstract class IRepairAlgorithm {
 	public String getName() {
 		return name;
 	}
-	
-	
+
 }

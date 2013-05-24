@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import pl.eit.mo.core.HRAllocator;
 import pl.eit.mo.core.HRMatrix;
 import pl.eit.mo.core.HRMatrixGenerator;
 import pl.eit.mo.core.impl.EmployeesDuplicationValidator;
@@ -71,28 +70,26 @@ public class Main {
 		
 		// ------- PROJECT 1 ------------------
 		
-		Task z1 = new Task("Java", 4);
-		Task z2 = new Task("SQL", 2);
+		Task z1 = new Task("z1", "Java", 4);
+		Task z2 = new Task("z2", "SQL", 2);
 		
 		List<Task> tasks = new ArrayList<Task>();
 		tasks.add(z1);
 		tasks.add(z2);
 		
-		Phase e1 = new Phase();
-		e1.setTasks(tasks);
+		Phase e1 = new Phase("e1", tasks);
 		
-		z1 = new Task("HTML", 3);
+		z1 = new Task("z1", "HTML", 3);
 		tasks = new ArrayList<Task>();
 		tasks.add(z1);
 		
-		Phase e2 = new Phase();
-		e2.setTasks(tasks);
+		Phase e2 = new Phase("e2", tasks);
 		
 		List<Phase> phases = new ArrayList<Phase>();
 		phases.add(e1);
 		phases.add(e2);
 		
-		Project p1 = new Project();
+		Project p1 = new Project("p1");
 		p1.setDeadline(10);
 		p1.setPenaltyForDelay(4);
 		p1.setSalary(20);
@@ -101,40 +98,37 @@ public class Main {
 		
 		// ------- PROJECT 2 ------------------
 		
-		z1 = new Task("Java", 2);
-		z2 = new Task("SQL", 2);
-		Task z3 = new Task("HTML", 2);
+		z1 = new Task("z1", "Java", 2);
+		z2 = new Task("z2", "SQL", 2);
+		Task z3 = new Task("z3", "HTML", 2);
 		
 		tasks = new ArrayList<Task>();
 		tasks.add(z1);
 		tasks.add(z2);
 		tasks.add(z3);
 		
-		e1 = new Phase();
-		e1.setTasks(tasks);
+		e1 = new Phase("e1", tasks);
 		
-		z1 = new Task("JS", 3);
-		z2 = new Task("HTML", 1);
+		z1 = new Task("z1", "JavaScript", 3);
+		z2 = new Task("z2", "HTML", 1);
 		tasks = new ArrayList<Task>();
 		tasks.add(z1);
 		tasks.add(z2);
 		
-		e2 = new Phase();
-		e2.setTasks(tasks);
+		e2 = new Phase("e2", tasks);
 		
-		z1 = new Task("HTML", 2);
+		z1 = new Task("z1", "HTML", 2);
 		tasks = new ArrayList<Task>();
 		tasks.add(z1);
 		
-		Phase e3 = new Phase();
-		e3.setTasks(tasks);
+		Phase e3 = new Phase("e3", tasks);
 		
 		phases = new ArrayList<Phase>();
 		phases.add(e1);
 		phases.add(e2);
 		phases.add(e3);
 		
-		Project p2 = new Project();
+		Project p2 = new Project("p2");
 		p2.setDeadline(15);
 		p2.setPenaltyForDelay(0);
 		p2.setSalary(30);
@@ -148,7 +142,7 @@ public class Main {
 		projects.add(p2);
 		
 		InputData inputData = new InputData();
-		inputData.setPeriodInDays(20);
+		inputData.setPeriodInDays(30);
 		inputData.setEmployees(employees);
 		inputData.setProjects(projects);
 		

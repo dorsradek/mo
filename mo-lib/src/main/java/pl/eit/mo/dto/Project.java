@@ -4,6 +4,9 @@ import java.util.List;
 
 public class Project
 {
+	/** nazwa projektu*/
+	private String name;
+	
 	/** lista faz(etapow) projektu */
 	private List<Phase> phases;
 
@@ -22,7 +25,11 @@ public class Project
 
 	/** wynagrodzenie za ukonczony projekt */
 	private double salary;
-
+	
+	public Project(String name) {
+		this.name = name;
+	}
+	
 	public List<Phase> getPhases() {
 		return phases;
 	}
@@ -61,6 +68,10 @@ public class Project
 
 	public void setSalary(double salary) {
 		this.salary = salary;
+	}
+
+	public String getName() {
+		return name;
 	}
 
 }

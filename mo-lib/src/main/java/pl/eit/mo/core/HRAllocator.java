@@ -101,6 +101,7 @@ public class HRAllocator {
 					// z kryterium aspiracji - nie dodaje wtedy zadnego ruchu
 					// do tablicy zabronien
 					if(!isSuccessful){
+						// co z dayRange ? wybieraj o takim samym dayRange 
 						Taboo tabooToExcecute = aspirationCritery.getTaboo();
 						IMovement aspirationMovement = findMovement(tabooToExcecute);
 						aspirationMovement.excecute(smallMatrix);
@@ -110,8 +111,8 @@ public class HRAllocator {
 					
 					// scalam macierze
 					hrMatrix.merge(smallMatrix, day ,daysRange);
-					// rekalkuluje postep pracy w kazdym zadaniu 
-					hrMatrix.recalculate();
+					// rekalkuluje postep pracy w kazdym zadaniu do okreslonego dnia
+					hrMatrix.recalculate(day);
 					
 					// musze naprawic macierz w tym celu probuje to zrobic kazdym
 					// dostepnym algorytmem naprawy - wybieram najlepszy rezultat
@@ -120,6 +121,7 @@ public class HRAllocator {
 					HRMatrix outHrMatrix;
 					for(IRepairAlgorithm repairAlgorithm : repairAlgorithms){
 						HRMatrix tmpHrMatrix = new HRMatrix(hrMatrix);
+						// zle napierw lec walidatorem a potem algorytmem naprawy a potem rekalkuluj
 						boolean tmpSuccessful = repairAlgorithm.repair(day, tmpHrMatrix, validators);
 						if(tmpSuccessful){
 							float tmpValue = goalFunction.getValue(tmpHrMatrix);
