@@ -1,7 +1,9 @@
 package pl.eit.mo.core;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import pl.eit.mo.core.interfaces.IRepairAlgorithm;
 import pl.eit.mo.core.interfaces.IValidator;
@@ -41,11 +43,8 @@ public class HRMatrixGenerator {
 			}
 		}
 		
-		// rekalkuluje cala macierz
-		hrMatrix.recalculateAll();
-		
-		// naprawiam macierz
 		for(int day=0; day<inputData.getPeriodInDays(); day++){
+			hrMatrix.recalculateDay(day);
 			DaySchedule daySchedule = hrMatrix.getDay(day);
 			
 			// musze zwalidowac i jesli jest zle to uruchomic 
@@ -54,12 +53,17 @@ public class HRMatrixGenerator {
 			while(!isValid){
 				List<Integer> faults = new ArrayList<Integer>();
 				for(IValidator validator : validators){
-					List<Integer> tmpFaults = validator.excecute(daySchedule, hrMatrix.getTasksData());
-					faults.addAll(tmpFaults);
+					List<Integer> tmpFaults = validator.excecute(daySchedule, hrMatrix.getTaskRowsData());
+					// scalam listy (bez duplikatow)
+					Set setboth = new HashSet(faults);
+					setboth.addAll(tmpFaults);
+					faults.clear();
+					faults.addAll(setboth);
 				}
 				// sprawdzam czy musze cos naprawiac
 				if(faults.size() != 0){
-					repairAlgorithm.excecute(daySchedule);
+					repairAlgorithm.excecute(daySchedule.getScheduleFields(), faults);
+					hrMatrix.recalculateDay(day);
 				}else{
 					isValid = true;
 				}

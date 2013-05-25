@@ -59,8 +59,28 @@ public class HRMatrix {
 		}
 	}
 	
+	/** robie rekalkulacje jednego dnia macierzy */
+	public void recalculateDay(int day) {
+		if(day > 0){
+			// pobieram fieldy pokolei i dodaje workDone
+			// z poprzedniego do aktulanego
+			DaySchedule prevDay = schedule.get(day-1);
+			DaySchedule currDay = schedule.get(day);
+			currDay.recalculateWorkDone(rows, employees);
+			
+			for(int field=0; field < currDay.getScheduleFields().size(); field++){
+				float prevDayWorkDone = prevDay.getScheduleFields().get(field).getWorkDone();
+				float currDayWorkDone = currDay.getScheduleFields().get(field).getWorkDone();
+				currDay.getScheduleFields().get(field).setWorkDone(prevDayWorkDone + currDayWorkDone);
+			}
+		}else{
+			DaySchedule currDay = schedule.get(0);
+			currDay.recalculateWorkDone(rows, employees);
+		}
+	}
+	
 	/** robie rekalkulacje calej macierzy */
-	public void recalculateAll() {
+/*	public void recalculateAll() {
 		DaySchedule prevDay = schedule.get(0);
 		prevDay.recalculateWorkDone(rows, employees);
 		for(int day=1; day<periodInDays; day++){
@@ -76,7 +96,7 @@ public class HRMatrix {
 			}
 			prevDay = currDay;
 		}
-	}
+	}*/
 
 	/** zwracam dzien o podanym id */
 	public DaySchedule getDay(int day) {
@@ -84,7 +104,7 @@ public class HRMatrix {
 	}
 
 	/** zwracam kolumne z danymi o zadaniach */
-	public List<TaskRow> getTasksData() {
+	public List<TaskRow> getTaskRowsData() {
 		return rows;
 	}
 	

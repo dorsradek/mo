@@ -1,6 +1,9 @@
 package pl.eit.mo.core.interfaces;
 
+import java.util.List;
+
 import pl.eit.mo.core.others.DaySchedule;
+import pl.eit.mo.core.others.ScheduleField;
 
 
 public abstract class IRepairAlgorithm {
@@ -17,7 +20,7 @@ public abstract class IRepairAlgorithm {
 	/** liczba prob naprawy kazdej kolumny */
 	private int numberOfRepairsProbes;
 
-	public abstract void excecute(DaySchedule daySchedule);
+	public abstract void excecute(List<ScheduleField> scheduleFields, List<Integer> faults);
 	
 	public boolean isUseTaboos() {
 		return isUseTaboos;

@@ -7,9 +7,9 @@ import java.util.Map;
 
 import pl.eit.mo.core.HRMatrix;
 import pl.eit.mo.core.HRMatrixGenerator;
-import pl.eit.mo.core.impl.EmployeesDuplicationValidator;
-import pl.eit.mo.core.impl.PhasesSequenceValidator;
-import pl.eit.mo.core.impl.RandRepairAlgorithm;
+import pl.eit.mo.core.impl.repairalgorithms.RandRepairAlgorithm;
+import pl.eit.mo.core.impl.validators.EmployeesDuplicationValidator;
+import pl.eit.mo.core.impl.validators.PhasesSequenceValidator;
 import pl.eit.mo.core.interfaces.IRepairAlgorithm;
 import pl.eit.mo.core.interfaces.IValidator;
 import pl.eit.mo.dto.Employee;
@@ -90,7 +90,7 @@ public class Main {
 		phases.add(e2);
 		
 		Project p1 = new Project("p1");
-		p1.setDeadline(10);
+		p1.setDeadline(8);
 		p1.setPenaltyForDelay(4);
 		p1.setSalary(20);
 		p1.setDayPenaltyForDelay(0.5);
@@ -129,7 +129,7 @@ public class Main {
 		phases.add(e3);
 		
 		Project p2 = new Project("p2");
-		p2.setDeadline(15);
+		p2.setDeadline(12);
 		p2.setPenaltyForDelay(0);
 		p2.setSalary(30);
 		p2.setDayPenaltyForDelay(2);
@@ -142,7 +142,7 @@ public class Main {
 		projects.add(p2);
 		
 		InputData inputData = new InputData();
-		inputData.setPeriodInDays(30);
+		inputData.setPeriodInDays(15);
 		inputData.setEmployees(employees);
 		inputData.setProjects(projects);
 		
@@ -158,6 +158,7 @@ public class Main {
 		HRMatrixGenerator matrixGenerator = new HRMatrixGenerator(validators, repairAlgorithm);
 		HRMatrix startMatrix = matrixGenerator.excecute(inputData);
 		
+		return;
 		/*HRAllocatorFactory haFactory = new HRAllocatorFactory();
 		// do kazdej rzeczy fabryki przez ktore konfiguruje wszystko
 		haFactory.setMovements(new ArrayList(){ movement1 });
