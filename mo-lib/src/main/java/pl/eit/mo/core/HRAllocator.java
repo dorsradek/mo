@@ -11,6 +11,7 @@ import pl.eit.mo.core.interfaces.IRepairAlgorithm;
 import pl.eit.mo.core.interfaces.IValidator;
 import pl.eit.mo.core.others.Taboo;
 import pl.eit.mo.dto.InputData;
+import pl.eit.mo.dto.OutputData;
 
 /**
  * Glowna klasa dostarczajaca interfejs do biblioteki rozdzielajacej pracownikow
@@ -65,27 +66,27 @@ public class HRAllocator {
 	
 	/** dane wejsiowe */
 	private InputData inputData;
+	
+	/** dane wyjsciowe */
+	private OutputData outputData;
 
-	private HRAllocator() {
-	}
-
-	public static HRAllocator getInstance() {
-		HRAllocator obj = new HRAllocator();
-		return obj;
+	
+	public HRAllocator(HRMatrix hrMatrix, InputData inputData) {
+		super();
+		this.hrMatrix = hrMatrix.getCopy();
+		this.inputData = inputData;
 	}
 	
 	/** glowna metoda klasy. */
 	public void excecute(){
-		/*for(int day=0; day < inputData.getPeriodInDays(); day++){
+		/*outputData = new OutputData();
+		
+		for(int day=0; day < inputData.getPeriodInDays(); day++){
 			// dekrementuje zabronienia i wywalam przestarzale
 			decrementAndRemoveEndedTaboos();
 			
-			// dla kazdej malej macierzy wykonuje kazdy ruch na liscie
+			// wykonuje kazdy ruch na liscie
 			for(IMovement movement : movements){
-				
-				// pobieram mala macierz
-				int daysRange = movement.getMovementRangeInDays();
-				HRMatrix smallMatrix = hrMatrix.getPartOfMatrix(day, daysRange);
 				
 				// kazdy z ruchow wykonuje okreslona ilosc razy
 				for(int j=0; j< movement.getNumberOfActionsInDay(); j++){
@@ -94,61 +95,54 @@ public class HRAllocator {
 					boolean isSuccessful = false;
 					Taboo newTaboo = null;
 					while(movement.getMaxNumberOfMovementProbes() < probe && !isSuccessful){
-						isSuccessful = movement.tryExcecute(smallMatrix, taboos);
+						isSuccessful = movement.tryExcecute(day, taboos);
 						probe++;
 					}
-					// jesli nie udalo sie wykonac ruchu korzystam  
-					// z kryterium aspiracji - nie dodaje wtedy zadnego ruchu
-					// do tablicy zabronien
-					if(!isSuccessful){
-						// co z dayRange ? wybieraj o takim samym dayRange 
-						Taboo tabooToExcecute = aspirationCritery.getTaboo();
-						IMovement aspirationMovement = findMovement(tabooToExcecute);
-						aspirationMovement.excecute(smallMatrix);
-					}else{
+					if(isSuccessful){
 						newTaboo = movement.getMovementTaboo();
-					}
-					
-					// scalam macierze
-					hrMatrix.merge(smallMatrix, day ,daysRange);
-					// rekalkuluje postep pracy w kazdym zadaniu do okreslonego dnia
-					hrMatrix.recalculate(day);
-					
-					// musze naprawic macierz w tym celu probuje to zrobic kazdym
-					// dostepnym algorytmem naprawy - wybieram najlepszy rezultat
-					float goalValue = 0;
-					boolean repairSuccessful = false;
-					HRMatrix outHrMatrix;
-					for(IRepairAlgorithm repairAlgorithm : repairAlgorithms){
-						HRMatrix tmpHrMatrix = new HRMatrix(hrMatrix);
-						// zle napierw lec walidatorem a potem algorytmem naprawy a potem rekalkuluj
-						boolean tmpSuccessful = repairAlgorithm.repair(day, tmpHrMatrix, validators);
-						if(tmpSuccessful){
-							float tmpValue = goalFunction.getValue(tmpHrMatrix);
-							// jesli naprawilem lepiej to ustawiam ten rezultat
-							if(tmpValue > goalValue){
-								repairSuccessful = true;
-								goalValue = tmpValue;
-								outHrMatrix = new HRMatrix(tmpHrMatrix);
+	
+						// musze naprawic macierz w tym celu probuje to zrobic kazdym
+						// dostepnym algorytmem naprawy - wybieram najlepszy rezultat
+						double goalValue = 0;
+						boolean repairSuccessful;
+						HRMatrix outHrMatrix;
+						for(IRepairAlgorithm repairAlgorithm : repairAlgorithms){
+							HRMatrix tmpHrMatrix = hrMatrix.getCopy();
+							// probuje naprawic macierz tmpHrMatrix
+							repairSuccessful = HRUtil.repairMatrix(day, inputData.getPeriodInDays(), 
+									tmpHrMatrix, repairAlgorithm, validators);
+							
+							if(repairSuccessful){
+								double tmpValue = goalFunction.getValue(tmpHrMatrix);
+								// jesli naprawilem lepiej to ustawiam ten rezultat
+								if(tmpValue > goalValue){
+									repairSuccessful = true;
+									goalValue = tmpValue;
+									outHrMatrix = tmpHrMatrix.getCopy();
+								}
+							}
+						}
+						
+						// zanim zrobie put musze policzyc jakosc zabronienia
+						// oraz czas przez ktory nie bede mogl go ruszac
+						if(newTaboo != null && repairSuccessful){
+							newTaboo.setQuality(goalValue);
+							taboos.put(movement.getId(), newTaboo);
+						}
+						
+						// zachowuje wynik iteracji
+						if(repairSuccessful){
+							double salary = goalFunction.getValue(hrMatrix);
+							outputData.getGoalFunctionValues().add(salary);
+							if(salary > outputData.getBestGoalFunctionValue()){
+								HRMatrix bestSchedule = hrMatrix.getCopy();
+								outputData.setBestSchedule(bestSchedule);
+								outputData.setBestGoalFunctionValue(salary);
 							}
 						}
 					}
-					
-					// zanim zrobie put musze policzyc jakosc zabronienia
-					// oraz czas przez ktory nie bede mogl go ruszac
-					if(newTaboo != null && repairSuccessful){
-						newTaboo.setQuality(goalValue);
-						taboos.put(movement.getId(), newTaboo);
-					}
-					
-					// zachowuje wynik iteracji
-					if(repairSuccessful){
-						
-					}
-					
 				}		
 			}
-			
 		}*/
 	}
 
@@ -166,6 +160,42 @@ public class HRAllocator {
 		    	entry.getValue().setNumberOfRoundsToRemove(tmp);
 		    }
 		}
+	}
+
+	public OutputData getOutputData() {
+		return outputData;
+	}
+
+	public List<IRepairAlgorithm> getRepairAlgorithms() {
+		return repairAlgorithms;
+	}
+
+	public void setRepairAlgorithms(List<IRepairAlgorithm> repairAlgorithms) {
+		this.repairAlgorithms = repairAlgorithms;
+	}
+
+	public IGoalFunction getGoalFunction() {
+		return goalFunction;
+	}
+
+	public void setGoalFunction(IGoalFunction goalFunction) {
+		this.goalFunction = goalFunction;
+	}
+
+	public List<IMovement> getMovements() {
+		return movements;
+	}
+
+	public void setMovements(List<IMovement> movements) {
+		this.movements = movements;
+	}
+
+	public List<IValidator> getValidators() {
+		return validators;
+	}
+
+	public void setValidators(List<IValidator> validators) {
+		this.validators = validators;
 	}
 	
 }

@@ -11,9 +11,6 @@ public abstract class IMovement {
 	/** liczba podjetych akcji tym ruchem w jednym dniu */
 	private int numberOfActionsInDay;
 	
-	/** zakres dni na ktorych dziala kazdy z ruchow w jednej iteracji */
-	private int movementRangeInDays;
-	
 	/**
 	 * wpolczynnik wplywa na to jak dlugo dany ruch pozostaje na liscie Taboo.
 	 */
@@ -48,14 +45,6 @@ public abstract class IMovement {
 
 	public void setMaxNumberOfMovementProbes(int maxNumberOfMovementProbes) {
 		this.maxNumberOfMovementProbes = maxNumberOfMovementProbes;
-	}
-
-	public int getMovementRangeInDays() {
-		return movementRangeInDays;
-	}
-
-	public void setMovementRangeInDays(int movementRangeInDays) {
-		this.movementRangeInDays = movementRangeInDays;
 	}
 
 	public float getMovementTabooRatio() {

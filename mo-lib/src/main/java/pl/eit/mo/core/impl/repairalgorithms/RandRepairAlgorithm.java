@@ -5,11 +5,10 @@ import java.util.List;
 import java.util.Random;
 
 import pl.eit.mo.core.interfaces.IRepairAlgorithm;
-import pl.eit.mo.core.others.DaySchedule;
 import pl.eit.mo.core.others.ScheduleField;
 
 /** algorytm naprawia dzien w sposob losowy. przenosi pracownikow z pol
- * w ktorych wystapily bledy do losowo wybranego (poprawnego) pola*/
+ * w ktorych wystapily bledy do losowo wybranego (poprawnego) pola */
 
 public class RandRepairAlgorithm extends IRepairAlgorithm {
 

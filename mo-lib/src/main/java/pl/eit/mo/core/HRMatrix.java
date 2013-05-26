@@ -1,9 +1,13 @@
 package pl.eit.mo.core;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import pl.eit.mo.core.others.DaySchedule;
+import pl.eit.mo.core.others.FastByteArrayOutputStream;
 import pl.eit.mo.core.others.ScheduleField;
 import pl.eit.mo.core.others.TaskRow;
 import pl.eit.mo.dto.Employee;
@@ -59,6 +63,30 @@ public class HRMatrix {
 		}
 	}
 	
+	/** zwraca kopie samego siebie */
+	public HRMatrix getCopy() {
+		HRMatrix newHRMatrix = null;
+        try {
+            FastByteArrayOutputStream fbos =
+                    new FastByteArrayOutputStream();
+            ObjectOutputStream out = new ObjectOutputStream(fbos);
+            out.writeObject(this);
+            out.flush();
+            out.close();
+
+            ObjectInputStream in =
+                new ObjectInputStream(fbos.getInputStream());
+            newHRMatrix = (HRMatrix) in.readObject();
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+        }
+        catch(ClassNotFoundException cnfe) {
+            cnfe.printStackTrace();
+        }
+		return newHRMatrix;
+	}
+	
 	/** robie rekalkulacje jednego dnia macierzy */
 	public void recalculateDay(int day) {
 		if(day > 0){
@@ -71,32 +99,22 @@ public class HRMatrix {
 			for(int field=0; field < currDay.getScheduleFields().size(); field++){
 				float prevDayWorkDone = prevDay.getScheduleFields().get(field).getWorkDone();
 				float currDayWorkDone = currDay.getScheduleFields().get(field).getWorkDone();
-				currDay.getScheduleFields().get(field).setWorkDone(prevDayWorkDone + currDayWorkDone);
+				float allWorkDoneInCurrDay = prevDayWorkDone + currDayWorkDone;
+				currDay.getScheduleFields().get(field).setWorkDone(allWorkDoneInCurrDay);
+				
+				// ustawiam ze skonczono prace nad zadaniem
+				if(allWorkDoneInCurrDay >=  rows.get(field).getDurationTime()){
+					currDay.getScheduleFields().get(field).setTaskFinished(true);
+				}
+					
 			}
 		}else{
+			// nie uwzgledniam przypadku ze cos zostanie skonczone pierwszego dnia
+			// nie jest to potrzebne
 			DaySchedule currDay = schedule.get(0);
 			currDay.recalculateWorkDone(rows, employees);
 		}
 	}
-	
-	/** robie rekalkulacje calej macierzy */
-/*	public void recalculateAll() {
-		DaySchedule prevDay = schedule.get(0);
-		prevDay.recalculateWorkDone(rows, employees);
-		for(int day=1; day<periodInDays; day++){
-			// pobieram fieldy pokolei i dodaje workDone
-			// z poprzedniego do aktulanego
-			DaySchedule currDay = schedule.get(day);
-			currDay.recalculateWorkDone(rows, employees);
-			
-			for(int field=0; field < currDay.getScheduleFields().size(); field++){
-				float prevDayWorkDone = prevDay.getScheduleFields().get(field).getWorkDone();
-				float currDayWorkDone = currDay.getScheduleFields().get(field).getWorkDone();
-				currDay.getScheduleFields().get(field).setWorkDone(prevDayWorkDone + currDayWorkDone);
-			}
-			prevDay = currDay;
-		}
-	}*/
 
 	/** zwracam dzien o podanym id */
 	public DaySchedule getDay(int day) {
@@ -106,6 +124,10 @@ public class HRMatrix {
 	/** zwracam kolumne z danymi o zadaniach */
 	public List<TaskRow> getTaskRowsData() {
 		return rows;
+	}
+
+	public int getPeriodInDays() {
+		return periodInDays;
 	}
 	
 }

@@ -11,7 +11,7 @@ public class Taboo {
 	
 	/** jakosc zabronienia 
 	 * (wartosc funkcji celu)*/
-	private float quality;
+	private double quality;
 
 	public String getTaboo() {
 		return taboo;
@@ -21,11 +21,11 @@ public class Taboo {
 		this.taboo = taboo;
 	}
 
-	public float getQuality() {
+	public double getQuality() {
 		return quality;
 	}
 
-	public void setQuality(float quality) {
+	public void setQuality(double quality) {
 		this.quality = quality;
 	}
 

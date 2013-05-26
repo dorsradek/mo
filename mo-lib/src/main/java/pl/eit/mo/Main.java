@@ -7,9 +7,11 @@ import java.util.Map;
 
 import pl.eit.mo.core.HRMatrix;
 import pl.eit.mo.core.HRMatrixGenerator;
+import pl.eit.mo.core.impl.others.SalaryGoalFunction;
 import pl.eit.mo.core.impl.repairalgorithms.RandRepairAlgorithm;
 import pl.eit.mo.core.impl.validators.EmployeesDuplicationValidator;
 import pl.eit.mo.core.impl.validators.PhasesSequenceValidator;
+import pl.eit.mo.core.interfaces.IGoalFunction;
 import pl.eit.mo.core.interfaces.IRepairAlgorithm;
 import pl.eit.mo.core.interfaces.IValidator;
 import pl.eit.mo.dto.Employee;
@@ -90,7 +92,7 @@ public class Main {
 		phases.add(e2);
 		
 		Project p1 = new Project("p1");
-		p1.setDeadline(8);
+		p1.setDeadline(10);
 		p1.setPenaltyForDelay(4);
 		p1.setSalary(20);
 		p1.setDayPenaltyForDelay(0.5);
@@ -142,7 +144,7 @@ public class Main {
 		projects.add(p2);
 		
 		InputData inputData = new InputData();
-		inputData.setPeriodInDays(15);
+		inputData.setPeriodInDays(20);
 		inputData.setEmployees(employees);
 		inputData.setProjects(projects);
 		
@@ -150,13 +152,27 @@ public class Main {
 		IValidator validator2 = new PhasesSequenceValidator();
 		
 		IRepairAlgorithm repairAlgorithm = new RandRepairAlgorithm();
+		repairAlgorithm.setNumberOfRepairsProbes(5);
 		
 		List<IValidator> validators = new ArrayList<IValidator>();
 		validators.add(validator1);
 		validators.add(validator2);
 		
 		HRMatrixGenerator matrixGenerator = new HRMatrixGenerator(validators, repairAlgorithm);
-		HRMatrix startMatrix = matrixGenerator.excecute(inputData);
+		IGoalFunction goalFunction = new SalaryGoalFunction(inputData);
+		
+		double maxSalary = 0;
+		for(int i=0; i<100;i++){
+			HRMatrix startMatrix = matrixGenerator.excecute(inputData);
+			double salary = 0;
+			if(startMatrix != null){
+				salary = goalFunction.getValue(startMatrix);
+				if(salary>maxSalary){
+					maxSalary = salary;
+				}
+			}
+		}
+		System.out.println(maxSalary);
 		
 		return;
 		/*HRAllocatorFactory haFactory = new HRAllocatorFactory();
@@ -174,9 +190,8 @@ public class Main {
 		ha.excecute();
 		
 		OutDataWrapper outData = ha.getOutData();
-		outData.getMatrix();
 		outData.getGoalFunctionsValues();	// pobieram liste z wszystkim wartosciami funkcji celu
-		outData.getBestGoalFunctionData();	// pobieram wszystkie dane najlepszej (czasy trwania etapow, 
+		outData.getBestHRMAtrix();			// pobieram wszystkie dane najlepszej (czasy trwania etapow, 
 											// przydzial pracownikow do zadan itd
 		 */
 	}
