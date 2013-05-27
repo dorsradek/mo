@@ -2,7 +2,6 @@ package pl.eit.mo.core;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import pl.eit.mo.core.interfaces.IAspirationCritery;
 import pl.eit.mo.core.interfaces.IGoalFunction;
@@ -58,7 +57,7 @@ public class HRAllocator {
 	private IAspirationCritery aspirationCritery;
 	
 	/** mapa z zabronieniami (typ, zabronienie) */
-	private Map<Integer, Taboo> taboos;
+	private List<Taboo> taboos;
 	
 	/** macierz na ktorej optymalizuje */
 	private HRMatrix hrMatrix;
@@ -77,35 +76,37 @@ public class HRAllocator {
 		this.inputData = inputData;
 	}
 	
-	/** glowna metoda klasy. */
+	/** glowna metoda klasy. realizuje algorytm Taboo Search */
 	public void excecute(){
-		/*outputData = new OutputData();
+		outputData = new OutputData();
 		
 		for(int day=0; day < inputData.getPeriodInDays(); day++){
-			// dekrementuje zabronienia i wywalam przestarzale
-			decrementAndRemoveEndedTaboos();
 			
 			// wykonuje kazdy ruch na liscie
 			for(IMovement movement : movements){
 				
 				// kazdy z ruchow wykonuje okreslona ilosc razy
 				for(int j=0; j< movement.getNumberOfActionsInDay(); j++){
+					// dekrementuje zabronienia i wywalam przestarzale
+					decrementAndRemoveEndedTaboos();
+					
 					// kazdy ruch probuje wykonac pewna ilosc razy 
 					int probe = 0;
 					boolean isSuccessful = false;
 					Taboo newTaboo = null;
 					while(movement.getMaxNumberOfMovementProbes() < probe && !isSuccessful){
-						isSuccessful = movement.tryExcecute(day, taboos);
+						isSuccessful = movement.tryExcecute(hrMatrix.getDay(day), 
+								hrMatrix.getTaskRowsData(), taboos);
 						probe++;
 					}
 					if(isSuccessful){
-						newTaboo = movement.getMovementTaboo();
-	
+						newTaboo = new Taboo(movement.getMovementTabooValue());
+						
 						// musze naprawic macierz w tym celu probuje to zrobic kazdym
 						// dostepnym algorytmem naprawy - wybieram najlepszy rezultat
 						double goalValue = 0;
-						boolean repairSuccessful;
-						HRMatrix outHrMatrix;
+						boolean repairSuccessful = false;
+						HRMatrix outHrMatrix = null;
 						for(IRepairAlgorithm repairAlgorithm : repairAlgorithms){
 							HRMatrix tmpHrMatrix = hrMatrix.getCopy();
 							// probuje naprawic macierz tmpHrMatrix
@@ -126,16 +127,16 @@ public class HRAllocator {
 						// zanim zrobie put musze policzyc jakosc zabronienia
 						// oraz czas przez ktory nie bede mogl go ruszac
 						if(newTaboo != null && repairSuccessful){
-							newTaboo.setQuality(goalValue);
-							taboos.put(movement.getId(), newTaboo);
+							newTaboo.setNumberOfRoundsToRemove(5);
+							taboos.add(newTaboo);
 						}
 						
 						// zachowuje wynik iteracji
 						if(repairSuccessful){
-							double salary = goalFunction.getValue(hrMatrix);
+							double salary = goalFunction.getValue(outHrMatrix);
 							outputData.getGoalFunctionValues().add(salary);
 							if(salary > outputData.getBestGoalFunctionValue()){
-								HRMatrix bestSchedule = hrMatrix.getCopy();
+								HRMatrix bestSchedule = outHrMatrix.getCopy();
 								outputData.setBestSchedule(bestSchedule);
 								outputData.setBestGoalFunctionValue(salary);
 							}
@@ -143,23 +144,20 @@ public class HRAllocator {
 					}
 				}		
 			}
-		}*/
+		}
 	}
 
 	/** dekrementuje zabronienia i usuwam nieaktywne */
 	private void decrementAndRemoveEndedTaboos() {
-		for(Iterator<Map.Entry<Integer, Taboo>> it = 
-				taboos.entrySet().iterator(); it.hasNext(); ) {
-     
-			Map.Entry<Integer, Taboo> entry = it.next();
-			int tmp = entry.getValue().getNumberOfRoundsToRemove();
+		for(Iterator<Taboo> itr = taboos.iterator();itr.hasNext();){  
+			Taboo element = itr.next();  
+			int tmp = element.getNumberOfRoundsToRemove();
 			tmp--;
-		    if(tmp <= 0) {
-		    	it.remove();
-		    }else{
-		    	entry.getValue().setNumberOfRoundsToRemove(tmp);
-		    }
-		}
+			element.setNumberOfRoundsToRemove(tmp);
+            if(tmp == 0){  
+                itr.remove();  
+            }  
+        }  
 	}
 
 	public OutputData getOutputData() {

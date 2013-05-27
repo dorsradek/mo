@@ -5,17 +5,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import pl.eit.mo.core.HRAllocator;
 import pl.eit.mo.core.HRMatrix;
 import pl.eit.mo.core.HRMatrixGenerator;
+import pl.eit.mo.core.impl.movements.RandRandMovement;
 import pl.eit.mo.core.impl.others.SalaryGoalFunction;
 import pl.eit.mo.core.impl.repairalgorithms.RandRepairAlgorithm;
 import pl.eit.mo.core.impl.validators.EmployeesDuplicationValidator;
 import pl.eit.mo.core.impl.validators.PhasesSequenceValidator;
 import pl.eit.mo.core.interfaces.IGoalFunction;
+import pl.eit.mo.core.interfaces.IMovement;
 import pl.eit.mo.core.interfaces.IRepairAlgorithm;
 import pl.eit.mo.core.interfaces.IValidator;
 import pl.eit.mo.dto.Employee;
 import pl.eit.mo.dto.InputData;
+import pl.eit.mo.dto.OutputData;
 import pl.eit.mo.dto.Phase;
 import pl.eit.mo.dto.Project;
 import pl.eit.mo.dto.Task;
@@ -161,7 +165,7 @@ public class Main {
 		HRMatrixGenerator matrixGenerator = new HRMatrixGenerator(validators, repairAlgorithm);
 		IGoalFunction goalFunction = new SalaryGoalFunction(inputData);
 		
-		double maxSalary = 0;
+		/*double maxSalary = 0;
 		for(int i=0; i<100;i++){
 			HRMatrix startMatrix = matrixGenerator.excecute(inputData);
 			double salary = 0;
@@ -172,28 +176,36 @@ public class Main {
 				}
 			}
 		}
-		System.out.println(maxSalary);
+		System.out.println(maxSalary);*/
 		
-		return;
-		/*HRAllocatorFactory haFactory = new HRAllocatorFactory();
-		// do kazdej rzeczy fabryki przez ktore konfiguruje wszystko
-		haFactory.setMovements(new ArrayList(){ movement1 });
-		haFactory.setRepairAlgorithms(new ArrayList(){ repair1 });
-		haFactory.setValidators(validators);
-		haFactory.setGoalFunction(goalFunction);
+		// generuje macierz startowa
+		HRMatrix startMatrix = matrixGenerator.excecute(inputData);
+		while(startMatrix == null){
+			startMatrix = matrixGenerator.excecute(inputData);
+		}
 		
+		List<IMovement> movements = new ArrayList<IMovement>();
+		IMovement movement1 = new RandRandMovement(); 
+		movement1.setMaxNumberOfMovementProbes(10);
+		movement1.setNumberOfActionsInDay(10);
+		movement1.setMovementTabooRatio(10);
+		movements.add(movement1);
+		
+		List<IRepairAlgorithm> repairAlgorithms = new ArrayList<IRepairAlgorithm>();
+		repairAlgorithms.add(repairAlgorithm);
 		
 		// sprawdza w srodku czy konfiguracja jest kompletna
-		HRAllocator ha = haFactory.getHRAllocator();
-		ha.setInputData(inputData);
-		ha.setStartMatrix(startMatrix);
+		HRAllocator ha = new HRAllocator(startMatrix, inputData);
+		ha.setGoalFunction(goalFunction);
+		ha.setMovements(movements);
+		ha.setRepairAlgorithms(repairAlgorithms);
+		ha.setValidators(validators);
 		ha.excecute();
 		
-		OutDataWrapper outData = ha.getOutData();
-		outData.getGoalFunctionsValues();	// pobieram liste z wszystkim wartosciami funkcji celu
-		outData.getBestHRMAtrix();			// pobieram wszystkie dane najlepszej (czasy trwania etapow, 
-											// przydzial pracownikow do zadan itd
-		 */
+		OutputData outData = ha.getOutputData();
+		outData.getBestGoalFunctionValue();	
+		outData.getBestSchedule();			
+		 
 	}
 
 }

@@ -11,7 +11,7 @@ import pl.eit.mo.core.others.ScheduleField;
  * w ktorych wystapily bledy do losowo wybranego (poprawnego) pola */
 
 public class RandRepairAlgorithm extends IRepairAlgorithm {
-
+	
 	private Random randomGenerator;
 	
 	@Override

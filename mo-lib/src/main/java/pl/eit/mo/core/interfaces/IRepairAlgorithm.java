@@ -8,10 +8,10 @@ import pl.eit.mo.core.others.ScheduleField;
 public abstract class IRepairAlgorithm {
 
 	/** nazwa algorytmu naprawy (unikalna) */
-	private String name;
+	protected String name;
 
 	/** liczba prob naprawy kazdej kolumny */
-	private int numberOfRepairsProbes;
+	protected int numberOfRepairsProbes;
 
 	public abstract void excecute(List<ScheduleField> scheduleFields, List<Integer> faults);
 

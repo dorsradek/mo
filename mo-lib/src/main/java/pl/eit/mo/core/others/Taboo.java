@@ -7,18 +7,24 @@ public class Taboo {
 	private int numberOfRoundsToRemove;
 	
 	/** zabronienie */
-	private String taboo;
+	private String tabooValue;
 	
 	/** jakosc zabronienia 
 	 * (wartosc funkcji celu)*/
 	private double quality;
 
-	public String getTaboo() {
-		return taboo;
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof Taboo && obj != null){
+			if(tabooValue.equals(((Taboo)obj).getTabooValue())){
+				return true;
+			}
+		}
+		return false;
 	}
-
-	public void setTaboo(String taboo) {
-		this.taboo = taboo;
+	
+	public Taboo(String tabooValue) {
+		this.tabooValue = tabooValue;
 	}
 
 	public double getQuality() {
@@ -36,6 +42,9 @@ public class Taboo {
 	public void setNumberOfRoundsToRemove(int numberOfRoundsToRemove) {
 		this.numberOfRoundsToRemove = numberOfRoundsToRemove;
 	}
-	
+
+	public String getTabooValue() {
+		return tabooValue;
+	}
 	
 }

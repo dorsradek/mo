@@ -1,26 +1,36 @@
 package pl.eit.mo.core.interfaces;
 
-public abstract class IMovement {
+import java.util.List;
 
-	/** id ruchu */
-	private int id;
+import pl.eit.mo.core.others.DaySchedule;
+import pl.eit.mo.core.others.Taboo;
+import pl.eit.mo.core.others.TaskRow;
+
+public abstract class IMovement {
 	
 	/** nazwa ruchu (unikalna) */
-	private String name;
+	protected String name;
 	
 	/** liczba podjetych akcji tym ruchem w jednym dniu */
-	private int numberOfActionsInDay;
+	protected int numberOfActionsInDay;
 	
 	/**
 	 * wpolczynnik wplywa na to jak dlugo dany ruch pozostaje na liscie Taboo.
 	 */
-	private float movementTabooRatio;
+	protected float movementTabooRatio;
 
 	/**
 	 * maksymalna liczba prob znalezienia ruchu. jesli przekrocze ta liczbe
 	 * korzystam z kryteriow aspiracji
 	 */
-	private int maxNumberOfMovementProbes;
+	protected int maxNumberOfMovementProbes;
+	
+	/** zabronienie dla tego ruchu */
+	 protected String movementTabooValue;
+	
+	
+	public abstract boolean tryExcecute(DaySchedule day, List<TaskRow> taskRowsData,
+			List<Taboo> taboos);
 	
 	
 	public int getNumberOfActionsInDay() {
@@ -33,10 +43,6 @@ public abstract class IMovement {
 
 	public String getName() {
 		return name;
-	}
-
-	public int getId() {
-		return id;
 	}
 
 	public int getMaxNumberOfMovementProbes() {
@@ -53,6 +59,10 @@ public abstract class IMovement {
 
 	public void setMovementTabooRatio(float movementTabooRatio) {
 		this.movementTabooRatio = movementTabooRatio;
+	}
+
+	public String getMovementTabooValue() {
+		return movementTabooValue;
 	}
 	
 }

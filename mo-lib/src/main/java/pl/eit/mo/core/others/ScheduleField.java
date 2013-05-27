@@ -2,10 +2,17 @@ package pl.eit.mo.core.others;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import pl.eit.mo.dto.Employee;
 
 public class ScheduleField {
+	
+	private static Random randomGenerator;
+	
+	static{
+		randomGenerator = new Random();
+	}
 	
 	/** lista zawierajaca pracownikow (po id) przydzielonych do pola */
 	private List<Integer> employees;
@@ -28,6 +35,29 @@ public class ScheduleField {
 		workDone = 0;
 		for(Integer emplId : employees){
 			workDone += employees2.get(emplId).getSkills().get(requiredSkill);
+		}
+	}
+	
+	/** usuwam pracownika o podanym id z listy pracownikow */
+	public void removeEmployee(int removeEmplId) {
+		 List<Integer> newlist = new ArrayList<Integer>();
+		 for(Integer emplId : employees){
+			 if(emplId != removeEmplId){
+				 newlist.add(emplId);
+			 }
+		 }
+		 employees = newlist;
+	}
+	
+	/** jesli liczba pracownikow > 0 zwraca losowego pracownika */
+	public int getRandEmployeeId(){
+		if(employees.size() == 0){
+			return -1;
+		}else if(employees.size() == 1){
+			return employees.get(0);
+		}else{
+			int emplIndex = randomGenerator.nextInt(employees.size());
+			return employees.get(emplIndex);
 		}
 	}
 	
@@ -54,4 +84,5 @@ public class ScheduleField {
 	public void setTaskFinished(boolean isTaskFinished) {
 		this.isTaskFinished = isTaskFinished;
 	}
+
 }
