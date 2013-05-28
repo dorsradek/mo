@@ -1,12 +1,13 @@
 package pl.eit.mo.core.others;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import pl.eit.mo.dto.Employee;
 
-public class ScheduleField {
+public class ScheduleField implements Serializable{
 	
 	private static Random randomGenerator;
 	

@@ -1,5 +1,6 @@
 package pl.eit.mo.core;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -72,6 +73,7 @@ public class HRAllocator {
 	
 	public HRAllocator(HRMatrix hrMatrix, InputData inputData) {
 		super();
+		this.taboos = new ArrayList<Taboo>();
 		this.hrMatrix = hrMatrix.getCopy();
 		this.inputData = inputData;
 	}
@@ -94,19 +96,22 @@ public class HRAllocator {
 					int probe = 0;
 					boolean isSuccessful = false;
 					Taboo newTaboo = null;
-					while(movement.getMaxNumberOfMovementProbes() < probe && !isSuccessful){
+					while(!isSuccessful && movement.getMaxNumberOfMovementProbes() > probe){
 						isSuccessful = movement.tryExcecute(hrMatrix.getDay(day), 
 								hrMatrix.getTaskRowsData(), taboos);
 						probe++;
 					}
 					if(isSuccessful){
+						int numberOfRoundsToRemove = 2;
 						newTaboo = new Taboo(movement.getMovementTabooValue());
-						
+						//System.out.println("---"+movement.getMovementTabooValue()+
+						//		"--day--"+day);
 						// musze naprawic macierz w tym celu probuje to zrobic kazdym
 						// dostepnym algorytmem naprawy - wybieram najlepszy rezultat
 						double goalValue = 0;
 						boolean repairSuccessful = false;
 						HRMatrix outHrMatrix = null;
+						// naprawiam tylko raz -> dodac wiecej napraw
 						for(IRepairAlgorithm repairAlgorithm : repairAlgorithms){
 							HRMatrix tmpHrMatrix = hrMatrix.getCopy();
 							// probuje naprawic macierz tmpHrMatrix
@@ -120,6 +125,7 @@ public class HRAllocator {
 									repairSuccessful = true;
 									goalValue = tmpValue;
 									outHrMatrix = tmpHrMatrix.getCopy();
+									numberOfRoundsToRemove*=2;
 								}
 							}
 						}
@@ -127,7 +133,7 @@ public class HRAllocator {
 						// zanim zrobie put musze policzyc jakosc zabronienia
 						// oraz czas przez ktory nie bede mogl go ruszac
 						if(newTaboo != null && repairSuccessful){
-							newTaboo.setNumberOfRoundsToRemove(5);
+							newTaboo.setNumberOfRoundsToRemove(numberOfRoundsToRemove);
 							taboos.add(newTaboo);
 						}
 						
@@ -149,7 +155,8 @@ public class HRAllocator {
 
 	/** dekrementuje zabronienia i usuwam nieaktywne */
 	private void decrementAndRemoveEndedTaboos() {
-		for(Iterator<Taboo> itr = taboos.iterator();itr.hasNext();){  
+		Iterator<Taboo> itr = taboos.iterator();
+		while(itr.hasNext()){  
 			Taboo element = itr.next();  
 			int tmp = element.getNumberOfRoundsToRemove();
 			tmp--;

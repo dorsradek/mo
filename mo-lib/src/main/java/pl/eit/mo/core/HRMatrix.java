@@ -3,6 +3,7 @@ package pl.eit.mo.core;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +20,7 @@ import pl.eit.mo.dto.Task;
 /** Klasa przechowujaca macierz z harmonogramem przydzialu 
  * pracownikow do projektow oraz dostarczajaca API  do tej macierzy */
 
-public class HRMatrix {
+public class HRMatrix implements Serializable{
 	
 	/** harmonogram */
 	private List<DaySchedule> schedule;

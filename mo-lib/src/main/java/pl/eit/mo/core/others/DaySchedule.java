@@ -1,5 +1,6 @@
 package pl.eit.mo.core.others;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Random;
 
@@ -8,7 +9,7 @@ import pl.eit.mo.dto.Employee;
 /** Klasa magazynuje harmonogram przydzialu pracownikow 
  * do projektow, etapow i zadan na konkretny dzien*/
 
-public class DaySchedule {
+public class DaySchedule  implements Serializable{
 	
 	private Random randomGenerator;
 	

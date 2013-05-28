@@ -1,10 +1,12 @@
 package pl.eit.mo.core.others;
 
+import java.io.Serializable;
+
 import pl.eit.mo.dto.Phase;
 import pl.eit.mo.dto.Project;
 import pl.eit.mo.dto.Task;
 
-public class TaskRow {
+public class TaskRow implements Serializable{
 	
 	/** nazwa projektu */
 	private String projectName;

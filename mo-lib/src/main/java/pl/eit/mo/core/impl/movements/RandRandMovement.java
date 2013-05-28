@@ -13,12 +13,15 @@ public class RandRandMovement extends IMovement{
 	
 	private Random randomGenerator;
 	
+	public RandRandMovement() {
+		randomGenerator = new Random();
+		this.name = "RandRandMovement";
+	}
+	
 	/** algorytm przenosi losowego pracownika z losowego pola w losowe miejsce */
 	@Override
 	public boolean tryExcecute(DaySchedule day, List<TaskRow> taskRowsData,
 			List<Taboo> taboos) {
-		
-		randomGenerator = new Random();
 		
 		// movementTabooValue = "skad; dokad; idPracownika"
 		
@@ -33,7 +36,7 @@ public class RandRandMovement extends IMovement{
 		
 		int destFieldIndex = randomGenerator.nextInt(day.getScheduleFields().size());
 		ScheduleField destField = day.getScheduleFields().get(destFieldIndex);
-		while(destField.getEmployees().size() == 0 || destFieldIndex == sourceFieldIndex){
+		while(destField.getEmployees().size() == 0){
 			destFieldIndex = randomGenerator.nextInt(day.getScheduleFields().size());
 			destField = day.getScheduleFields().get(destFieldIndex);
 		}
@@ -43,9 +46,10 @@ public class RandRandMovement extends IMovement{
 		}
 		
 		// sprawdzam czy nie wykonalem juz takiego ruchu
-		movementTabooValue = sourceFieldIndex +";"+ destFieldIndex +";"+ emplId +";";
+		//movementTabooValue = sourceFieldIndex +";"+ destFieldIndex +";"+ emplId +";";
+		movementTabooValue = ""+emplId;
 		Taboo taboo = new Taboo(movementTabooValue);
-		if(!taboos.contains(taboo)){
+		if(!taboos.contains(taboo) && sourceFieldIndex != destFieldIndex){
 			// wykonuje ruch 
 			destField.getEmployees().add(emplId);
 			sourceField.removeEmployee(emplId);

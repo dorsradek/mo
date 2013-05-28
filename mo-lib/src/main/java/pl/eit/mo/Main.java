@@ -156,7 +156,7 @@ public class Main {
 		IValidator validator2 = new PhasesSequenceValidator();
 		
 		IRepairAlgorithm repairAlgorithm = new RandRepairAlgorithm();
-		repairAlgorithm.setNumberOfRepairsProbes(5);
+		repairAlgorithm.setNumberOfRepairsProbes(2);
 		
 		List<IValidator> validators = new ArrayList<IValidator>();
 		validators.add(validator1);
@@ -184,10 +184,12 @@ public class Main {
 			startMatrix = matrixGenerator.excecute(inputData);
 		}
 		
+		System.out.println(goalFunction.getValue(startMatrix));
+		
 		List<IMovement> movements = new ArrayList<IMovement>();
 		IMovement movement1 = new RandRandMovement(); 
 		movement1.setMaxNumberOfMovementProbes(10);
-		movement1.setNumberOfActionsInDay(10);
+		movement1.setNumberOfActionsInDay(10000);
 		movement1.setMovementTabooRatio(10);
 		movements.add(movement1);
 		
@@ -205,7 +207,8 @@ public class Main {
 		OutputData outData = ha.getOutputData();
 		outData.getBestGoalFunctionValue();	
 		outData.getBestSchedule();			
-		 
+		
+		System.out.println(outData.getBestGoalFunctionValue());
 	}
 
 }

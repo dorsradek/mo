@@ -1,8 +1,9 @@
 package pl.eit.mo.dto;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public class Employee
+public class Employee implements Serializable
 {
 	/** alias pracownika (unikalny) */
 	private String alias;
