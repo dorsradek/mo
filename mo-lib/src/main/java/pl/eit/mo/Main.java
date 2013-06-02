@@ -1,5 +1,6 @@
 package pl.eit.mo;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,9 +9,11 @@ import java.util.Map;
 import pl.eit.mo.core.HRAllocator;
 import pl.eit.mo.core.HRMatrix;
 import pl.eit.mo.core.HRMatrixGenerator;
-import pl.eit.mo.core.impl.movements.RandRandMovement;
+import pl.eit.mo.core.impl.movements.RandRandEmployeeMovement;
+import pl.eit.mo.core.impl.movements.RandRandFieldMovement;
 import pl.eit.mo.core.impl.others.SalaryGoalFunction;
 import pl.eit.mo.core.impl.repairalgorithms.RandRepairAlgorithm;
+import pl.eit.mo.core.impl.repairalgorithms.UpRepairAlgorithm;
 import pl.eit.mo.core.impl.validators.EmployeesDuplicationValidator;
 import pl.eit.mo.core.impl.validators.PhasesSequenceValidator;
 import pl.eit.mo.core.interfaces.IGoalFunction;
@@ -26,10 +29,7 @@ import pl.eit.mo.dto.Task;
 
 public class Main {
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		// bardzo proste fabryki
 		//MovementsFactory	// konfiguruje i moge wyciagac rozne ruchy z ta konfiguracja
 		//RepairAlgorithmsFactory // j.w.
@@ -156,7 +156,8 @@ public class Main {
 		IValidator validator2 = new PhasesSequenceValidator();
 		
 		IRepairAlgorithm repairAlgorithm = new RandRepairAlgorithm();
-		repairAlgorithm.setNumberOfRepairsProbes(2);
+		repairAlgorithm.setMaxNumberOfDayRepairsProbes(5);
+		repairAlgorithm.setNumberOfRepairsProbes(1);
 		
 		List<IValidator> validators = new ArrayList<IValidator>();
 		validators.add(validator1);
@@ -183,18 +184,29 @@ public class Main {
 		while(startMatrix == null){
 			startMatrix = matrixGenerator.excecute(inputData);
 		}
+		PrintWriter fileStartOut = new PrintWriter("startMatrix.txt");
+		fileStartOut.println(startMatrix.toString());
+		fileStartOut.close();
 		
 		System.out.println(goalFunction.getValue(startMatrix));
 		
+		IRepairAlgorithm repairAlgorithm1 = new UpRepairAlgorithm();
+		repairAlgorithm1.setMaxNumberOfDayRepairsProbes(1);
+		repairAlgorithm1.setNumberOfRepairsProbes(1);
+		
 		List<IMovement> movements = new ArrayList<IMovement>();
-		IMovement movement1 = new RandRandMovement(); 
-		movement1.setMaxNumberOfMovementProbes(10);
-		movement1.setNumberOfActionsInDay(10000);
-		movement1.setMovementTabooRatio(10);
+		IMovement movement1 = new RandRandEmployeeMovement(); 
+		movement1.setMaxNumberOfMovementProbes(5);
+		movement1.setNumberOfActionsInDay(100);
+		movement1.setWeakMovementTabooIterations(1);
+		movement1.setMediumMovementTabooIterations(2);
+		movement1.setGoodMovementTabooIterations(3);
+		movement1.setTheBestMovementTabooIterations(5);
 		movements.add(movement1);
 		
 		List<IRepairAlgorithm> repairAlgorithms = new ArrayList<IRepairAlgorithm>();
-		repairAlgorithms.add(repairAlgorithm);
+		//repairAlgorithms.add(repairAlgorithm);
+		repairAlgorithms.add(repairAlgorithm1);
 		
 		// sprawdza w srodku czy konfiguracja jest kompletna
 		HRAllocator ha = new HRAllocator(startMatrix, inputData);
@@ -202,13 +214,27 @@ public class Main {
 		ha.setMovements(movements);
 		ha.setRepairAlgorithms(repairAlgorithms);
 		ha.setValidators(validators);
+		ha.setNumberOfIterations(1);
 		ha.excecute();
+
 		
 		OutputData outData = ha.getOutputData();
 		outData.getBestGoalFunctionValue();	
 		outData.getBestSchedule();			
 		
+		PrintWriter fileFinishOut = new PrintWriter("outMatrix.txt");
+		fileFinishOut.println(outData.getBestSchedule().toString());
+		fileFinishOut.close();
+		
 		System.out.println(outData.getBestGoalFunctionValue());
+		
+		PrintWriter fileOut = new PrintWriter("goal_values.txt");
+	    int index = 0;
+		for(Double value : outData.getGoalFunctionValues()){
+			fileOut.println(index+";"+value);
+			index++;
+		}
+		fileOut.close();
 	}
 
 }

@@ -70,6 +70,9 @@ public class HRAllocator {
 	/** dane wyjsciowe */
 	private OutputData outputData;
 
+	/** liczba powtorzen algorytmu */
+	private int numberOfIterations;
+
 	
 	public HRAllocator(HRMatrix hrMatrix, InputData inputData) {
 		super();
@@ -81,75 +84,116 @@ public class HRAllocator {
 	/** glowna metoda klasy. realizuje algorytm Taboo Search */
 	public void excecute(){
 		outputData = new OutputData();
-		
-		for(int day=0; day < inputData.getPeriodInDays(); day++){
-			
+		HRMatrix startMatrix = hrMatrix;
+		for(int iter=0; iter < numberOfIterations; iter++){
+			hrMatrix = startMatrix.getCopy();
 			// wykonuje kazdy ruch na liscie
 			for(IMovement movement : movements){
 				
-				// kazdy z ruchow wykonuje okreslona ilosc razy
-				for(int j=0; j< movement.getNumberOfActionsInDay(); j++){
-					// dekrementuje zabronienia i wywalam przestarzale
-					decrementAndRemoveEndedTaboos();
-					
-					// kazdy ruch probuje wykonac pewna ilosc razy 
-					int probe = 0;
-					boolean isSuccessful = false;
-					Taboo newTaboo = null;
-					while(!isSuccessful && movement.getMaxNumberOfMovementProbes() > probe){
-						isSuccessful = movement.tryExcecute(hrMatrix.getDay(day), 
-								hrMatrix.getTaskRowsData(), taboos);
-						probe++;
-					}
-					if(isSuccessful){
-						int numberOfRoundsToRemove = 2;
-						newTaboo = new Taboo(movement.getMovementTabooValue());
-						//System.out.println("---"+movement.getMovementTabooValue()+
-						//		"--day--"+day);
-						// musze naprawic macierz w tym celu probuje to zrobic kazdym
-						// dostepnym algorytmem naprawy - wybieram najlepszy rezultat
-						double goalValue = 0;
-						boolean repairSuccessful = false;
-						HRMatrix outHrMatrix = null;
-						// naprawiam tylko raz -> dodac wiecej napraw
-						for(IRepairAlgorithm repairAlgorithm : repairAlgorithms){
-							HRMatrix tmpHrMatrix = hrMatrix.getCopy();
-							// probuje naprawic macierz tmpHrMatrix
-							repairSuccessful = HRUtil.repairMatrix(day, inputData.getPeriodInDays(), 
-									tmpHrMatrix, repairAlgorithm, validators);
+				for(int day=0; day < inputData.getPeriodInDays(); day++){
+				
+					// kazdy z ruchow wykonuje okreslona ilosc razy
+					for(int j=0; j< movement.getNumberOfActionsInDay(); j++){
+						// ostania poprawna macierz
+						HRMatrix lastValidMatrix = hrMatrix.getCopy();
+						
+						// dekrementuje zabronienia i wywalam przestarzale
+						decrementAndRemoveEndedTaboos();
+						
+						// kazdy ruch probuje wykonac pewna ilosc razy 
+						int probe = 0;
+						boolean isSuccessful = false;
+						Taboo newTaboo = null;
+						while(!isSuccessful && movement.getMaxNumberOfMovementProbes() > probe){
+							isSuccessful = movement.tryExcecute(hrMatrix, day, 
+									hrMatrix.getTaskRowsData(), taboos);
+							if(!isSuccessful){
+								outputData.incrementWrongMovementExcecutes();
+							}else{
+								outputData.incrementSuccessMovementExcecutes();
+							}
+							probe++;
+						}
+						if(isSuccessful){
+							newTaboo = new Taboo(movement.getMovementTabooValue());
+							// musze naprawic macierz w tym celu probuje to zrobic kazdym
+							// dostepnym algorytmem naprawy - wybieram najlepszy rezultat
+							double goalValue = 0;
+							boolean repairSuccessful = false;
 							
+							HRMatrix modifiedHrMatrix = hrMatrix.getCopy();
+							HRMatrix bestRepairedHrMatrix = null;
+							for(IRepairAlgorithm repairAlgorithm : repairAlgorithms){
+								// naprawiam macierz
+								for(int repProbe = 0; repProbe < repairAlgorithm.getNumberOfRepairsProbes(); repProbe++){
+									repairSuccessful = HRUtil.repairMatrix(day, inputData.getPeriodInDays(), 
+											hrMatrix, repairAlgorithm, validators);
+									if(repairSuccessful){
+										double tmpValue = goalFunction.getValue(hrMatrix);
+										
+										// dodaje informacje o przebiegu algorytmu
+										outputData.incrementSuccessRapairs();
+										outputData.getGoalFunctionValues().add(tmpValue);
+										
+										if(tmpValue > goalValue){
+											// zapamietuje najlepsza naprawe
+											goalValue = tmpValue;
+											bestRepairedHrMatrix = hrMatrix.getCopy();
+										}
+									}else{
+										// naprawa sie nie udala wiec wracam do zmodyfikowanej 
+										// macierzy - bede ja dalej naprawiac
+										hrMatrix = modifiedHrMatrix.getCopy();
+										outputData.incrementWrongRapairs();
+										outputData.getGoalFunctionValues().add(-1.0);
+									}
+								}								
+							}
+							
+							// zanim zrobie put musze policzyc jakosc zabronienia
+							// oraz czas przez ktory nie bede mogl go ruszac
+							if(newTaboo != null && repairSuccessful){
+								// ustawiam jak dlugo ruch bedzie na liscie tabu
+								// w tym celu licze jak dobry byl to ruch
+								int numberOfRoundsToRemove = getMovementTabooIterations(movement, 
+										goalValue, outputData.getBestGoalFunctionValue());
+								newTaboo.setNumberOfRoundsToRemove(numberOfRoundsToRemove);
+								taboos.add(newTaboo);
+							}
+							
+							// zachowuje wynik iteracji
 							if(repairSuccessful){
-								double tmpValue = goalFunction.getValue(tmpHrMatrix);
-								// jesli naprawilem lepiej to ustawiam ten rezultat
-								if(tmpValue > goalValue){
-									repairSuccessful = true;
-									goalValue = tmpValue;
-									outHrMatrix = tmpHrMatrix.getCopy();
-									numberOfRoundsToRemove*=2;
+								hrMatrix = bestRepairedHrMatrix.getCopy();
+								if(goalValue > outputData.getBestGoalFunctionValue()){
+									outputData.setBestSchedule(bestRepairedHrMatrix);
+									outputData.setBestGoalFunctionValue(goalValue);
 								}
+							}else{
+								// nie udalo sie naprawic macierzy wiec ustawiam
+								// ostania poprawna macierz
+								hrMatrix = lastValidMatrix;
 							}
 						}
-						
-						// zanim zrobie put musze policzyc jakosc zabronienia
-						// oraz czas przez ktory nie bede mogl go ruszac
-						if(newTaboo != null && repairSuccessful){
-							newTaboo.setNumberOfRoundsToRemove(numberOfRoundsToRemove);
-							taboos.add(newTaboo);
-						}
-						
-						// zachowuje wynik iteracji
-						if(repairSuccessful){
-							double salary = goalFunction.getValue(outHrMatrix);
-							outputData.getGoalFunctionValues().add(salary);
-							if(salary > outputData.getBestGoalFunctionValue()){
-								HRMatrix bestSchedule = outHrMatrix.getCopy();
-								outputData.setBestSchedule(bestSchedule);
-								outputData.setBestGoalFunctionValue(salary);
-							}
-						}
-					}
-				}		
+					}		
+				}
 			}
+		}
+	}
+
+	/** pobiera liczbe iteracji na jaka ruch zostanie dodany
+	 * do listy tabu */
+	private int getMovementTabooIterations(IMovement movement, 
+			double currentGoalFunctionValue, double bestGoalFunctionValue) {
+		double ratio = currentGoalFunctionValue/bestGoalFunctionValue;
+		
+		if(ratio < 0.5){
+			return movement.getWeakMovementTabooIterations();
+		}else if(ratio < 0.8){
+			return movement.getMediumMovementTabooIterations();
+		}else if(ratio < 1){
+			return movement.getGoodMovementTabooIterations();
+		}else{
+			return movement.getTheBestMovementTabooIterations();
 		}
 	}
 
@@ -201,6 +245,14 @@ public class HRAllocator {
 
 	public void setValidators(List<IValidator> validators) {
 		this.validators = validators;
+	}
+
+	public void setNumberOfIterations(int numberOfIterations) {
+		this.numberOfIterations = numberOfIterations;
+	}
+
+	public int getNumberOfIterations() {
+		return numberOfIterations;
 	}
 	
 }

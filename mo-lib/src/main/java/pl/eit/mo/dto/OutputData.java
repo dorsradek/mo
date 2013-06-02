@@ -16,9 +16,25 @@ public class OutputData {
 	/** najwyzsza wartosc funkcji celu */
 	private double bestGoalFunctionValue;
 	
+	/** poprawne wywolania ruchow */
+	private int successMovementExcecutes;
+	
+	/** bledne wywolania ruchow */
+	private int wrongMovementExcecutes;
+	
+	/** poprawne naprawy */
+	private int successRapairs;
+	
+	/** bledne naprawy*/
+	private int wrongRapairs;
+	
 	public OutputData() {
 		goalFunctionValues = new ArrayList<Double>();
 		bestGoalFunctionValue = 0;
+		successMovementExcecutes = 0;
+		wrongMovementExcecutes = 0;
+		successRapairs = 0;
+		wrongRapairs = 0;
 	}
 
 	public List<Double> getGoalFunctionValues() {
@@ -43,6 +59,38 @@ public class OutputData {
 
 	public double getBestGoalFunctionValue() {
 		return bestGoalFunctionValue;
+	}
+
+	public int getSuccessMovementExcecutes() {
+		return successMovementExcecutes;
+	}
+
+	public void incrementSuccessMovementExcecutes() {
+		this.successMovementExcecutes++;
+	}
+
+	public int getWrongMovementExcecutes() {
+		return wrongMovementExcecutes;
+	}
+
+	public void incrementWrongMovementExcecutes() {
+		this.wrongMovementExcecutes++;
+	}
+
+	public int getSuccessRapairs() {
+		return successRapairs;
+	}
+
+	public void incrementSuccessRapairs() {
+		this.successRapairs++;
+	}
+
+	public int getWrongRapairs() {
+		return wrongRapairs;
+	}
+
+	public void	incrementWrongRapairs() {
+		this.wrongRapairs++;
 	}
 	
 	

@@ -22,6 +22,14 @@ import pl.eit.mo.dto.Task;
 
 public class HRMatrix implements Serializable{
 	
+	private static int SHOW_GANTT_CHART = 0;
+	private static int SHOW_SCHEDULE = 1;
+	
+	private static int NUM_OF_EXCEC_COPIES = 0;
+	private static double TIME_OF_COPIES_IN_MILIS = 0;
+	
+	private static int CHOOSE_ACTION = SHOW_SCHEDULE;
+	
 	/** harmonogram */
 	private List<DaySchedule> schedule;
 	
@@ -66,6 +74,7 @@ public class HRMatrix implements Serializable{
 	
 	/** zwraca kopie samego siebie */
 	public HRMatrix getCopy() {
+		long copyStartTime = System.currentTimeMillis();
 		HRMatrix newHRMatrix = null;
         try {
             FastByteArrayOutputStream fbos =
@@ -78,6 +87,9 @@ public class HRMatrix implements Serializable{
             ObjectInputStream in =
                 new ObjectInputStream(fbos.getInputStream());
             newHRMatrix = (HRMatrix) in.readObject();
+            long copyTime = System.currentTimeMillis() - copyStartTime;
+            NUM_OF_EXCEC_COPIES++;
+            TIME_OF_COPIES_IN_MILIS += copyTime;
         }
         catch(IOException e) {
             e.printStackTrace();
@@ -115,6 +127,48 @@ public class HRMatrix implements Serializable{
 			DaySchedule currDay = schedule.get(0);
 			currDay.recalculateWorkDone(rows, employees);
 		}
+	}
+	
+	@Override
+	public String toString() {
+		String result = "";
+		for(int j=0;j<rows.size();j++){
+			for(int i=0;i<schedule.size();i++){
+				ScheduleField field = schedule.get(i).getScheduleFields().get(j);
+				String word="";
+				if(CHOOSE_ACTION == SHOW_SCHEDULE){
+					word = getEmployeesToString(field);
+					result += word;
+					result += "\t";
+				}else if(CHOOSE_ACTION == SHOW_GANTT_CHART){
+					if(field.isTaskFinished() == false 
+							&& field.getWorkDone() > 0){
+						word = "--";
+					}else{
+						word = "  ";
+					}
+					result += word;
+				}
+			}
+			result += "\n";
+		}
+		return result;
+	}
+
+	/** pobieram liste pracownikow do stringa */
+	private String getEmployeesToString(ScheduleField field) {
+		String word = "";
+		if(field.getEmployees().size() == 0){
+			word += "-";
+		}else{
+			for(Integer emplId : field.getEmployees()){
+				word += emplId+",";
+			}
+		}
+		while(word.length() < (rows.size()-2)){
+			word += " ";
+		}
+		return word;
 	}
 
 	/** zwracam dzien o podanym id */

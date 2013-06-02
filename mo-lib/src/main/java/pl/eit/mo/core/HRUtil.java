@@ -24,7 +24,7 @@ public class HRUtil {
 			// algorytm naprawy na tym dniu
 			boolean isValid = false;
 			int probeNumber = 0;
-			while(!isValid && probeNumber < repairAlgorithm.getNumberOfRepairsProbes()){
+			while(!isValid && probeNumber < repairAlgorithm.getMaxNumberOfDayRepairsProbes()){
 				probeNumber++;
 				List<Integer> faults = new ArrayList<Integer>();
 				for(IValidator validator : validators){

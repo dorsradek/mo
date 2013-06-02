@@ -2,6 +2,7 @@ package pl.eit.mo.core.interfaces;
 
 import java.util.List;
 
+import pl.eit.mo.core.HRMatrix;
 import pl.eit.mo.core.others.DaySchedule;
 import pl.eit.mo.core.others.Taboo;
 import pl.eit.mo.core.others.TaskRow;
@@ -14,10 +15,21 @@ public abstract class IMovement {
 	/** liczba podjetych akcji tym ruchem w jednym dniu */
 	protected int numberOfActionsInDay;
 	
-	/**
-	 * wpolczynnik wplywa na to jak dlugo dany ruch pozostaje na liscie Taboo.
-	 */
-	protected float movementTabooRatio;
+	/** liczba iteracji na liscie tabu jesli po zrobieniu ruchu 
+	 * i naprawie wartosc funkcji celu jest mniejsza niz 50% */
+	protected int weakMovementTabooIterations = 0;
+	
+	/** liczba iteracji na liscie tabu jesli po zrobieniu ruchu 
+	 * i naprawie wartosc funkcji celu jest od 50 do 80% */
+	protected int mediumMovementTabooIterations = 0;
+	
+	/** liczba iteracji na liscie tabu jesli po zrobieniu ruchu 
+	 * i naprawie wartosc funkcji celu jest od 80 do 100% */
+	protected int goodMovementTabooIterations = 0;
+	
+	/** liczba iteracji na liscie tabu jesli po zrobieniu ruchu 
+	 * i naprawie wartosc funkcji celu jest wieksza od 100%  */
+	protected int theBestMovementTabooIterations = 0;
 
 	/**
 	 * maksymalna liczba prob znalezienia ruchu. jesli przekrocze ta liczbe
@@ -29,7 +41,7 @@ public abstract class IMovement {
 	 protected String movementTabooValue;
 	
 	
-	public abstract boolean tryExcecute(DaySchedule day, List<TaskRow> taskRowsData,
+	public abstract boolean tryExcecute(HRMatrix hrMatrix,int day, List<TaskRow> taskRowsData,
 			List<Taboo> taboos);
 	
 	
@@ -53,16 +65,48 @@ public abstract class IMovement {
 		this.maxNumberOfMovementProbes = maxNumberOfMovementProbes;
 	}
 
-	public float getMovementTabooRatio() {
-		return movementTabooRatio;
-	}
-
-	public void setMovementTabooRatio(float movementTabooRatio) {
-		this.movementTabooRatio = movementTabooRatio;
-	}
-
 	public String getMovementTabooValue() {
 		return movementTabooValue;
+	}
+
+
+	public int getWeakMovementTabooIterations() {
+		return weakMovementTabooIterations;
+	}
+
+
+	public void setWeakMovementTabooIterations(int weakMovementTabooIterations) {
+		this.weakMovementTabooIterations = weakMovementTabooIterations;
+	}
+
+
+	public int getMediumMovementTabooIterations() {
+		return mediumMovementTabooIterations;
+	}
+
+
+	public void setMediumMovementTabooIterations(int mediumMovementTabooIterations) {
+		this.mediumMovementTabooIterations = mediumMovementTabooIterations;
+	}
+
+
+	public int getGoodMovementTabooIterations() {
+		return goodMovementTabooIterations;
+	}
+
+
+	public void setGoodMovementTabooIterations(int goodMovementTabooIterations) {
+		this.goodMovementTabooIterations = goodMovementTabooIterations;
+	}
+
+
+	public int getTheBestMovementTabooIterations() {
+		return theBestMovementTabooIterations;
+	}
+
+
+	public void setTheBestMovementTabooIterations(int theBestMovementTabooIterations) {
+		this.theBestMovementTabooIterations = theBestMovementTabooIterations;
 	}
 	
 }
