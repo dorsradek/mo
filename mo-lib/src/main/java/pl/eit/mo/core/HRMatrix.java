@@ -42,9 +42,15 @@ public class HRMatrix implements Serializable{
 	/** okres rozliczeniowy */
 	private int periodInDays;
 	
+	public HRMatrix() {
+		periodInDays = 0;
+		schedule = new ArrayList<DaySchedule>();
+		employees = new ArrayList<Employee>();
+		rows = new ArrayList<TaskRow>();
+	}
+	
 	/** tworze pusta macierz na podstawie danych wejsiowych */
 	public HRMatrix(InputData inputData) {
-		
 		periodInDays = inputData.getPeriodInDays();
 		rows = new ArrayList<TaskRow>();
 		schedule = new ArrayList<DaySchedule>();
@@ -75,8 +81,14 @@ public class HRMatrix implements Serializable{
 	/** zwraca kopie samego siebie */
 	public HRMatrix getCopy() {
 		long copyStartTime = System.currentTimeMillis();
-		HRMatrix newHRMatrix = null;
-        try {
+		HRMatrix newHRMatrix = new HRMatrix();
+		newHRMatrix.setPeriodInDays(this.periodInDays);
+		newHRMatrix.setEmployees(this.employees);
+		for(TaskRow row : rows){
+			newHRMatrix.getRows().add(row.getCopy());
+		}
+		
+        /*try {
             FastByteArrayOutputStream fbos =
                     new FastByteArrayOutputStream();
             ObjectOutputStream out = new ObjectOutputStream(fbos);
@@ -87,16 +99,17 @@ public class HRMatrix implements Serializable{
             ObjectInputStream in =
                 new ObjectInputStream(fbos.getInputStream());
             newHRMatrix = (HRMatrix) in.readObject();
-            long copyTime = System.currentTimeMillis() - copyStartTime;
-            NUM_OF_EXCEC_COPIES++;
-            TIME_OF_COPIES_IN_MILIS += copyTime;
         }
         catch(IOException e) {
             e.printStackTrace();
         }
         catch(ClassNotFoundException cnfe) {
             cnfe.printStackTrace();
-        }
+        }*/
+		
+		long copyTime = System.currentTimeMillis() - copyStartTime;
+        NUM_OF_EXCEC_COPIES++;
+        TIME_OF_COPIES_IN_MILIS += copyTime;
 		return newHRMatrix;
 	}
 	
@@ -176,13 +189,36 @@ public class HRMatrix implements Serializable{
 		return schedule.get(day);
 	}
 
-	/** zwracam kolumne z danymi o zadaniach */
-	public List<TaskRow> getTaskRowsData() {
+	public int getPeriodInDays() {
+		return periodInDays;
+	}
+
+	public List<DaySchedule> getSchedule() {
+		return schedule;
+	}
+
+	public void setSchedule(List<DaySchedule> schedule) {
+		this.schedule = schedule;
+	}
+
+	public List<Employee> getEmployees() {
+		return employees;
+	}
+
+	public void setEmployees(List<Employee> employees) {
+		this.employees = employees;
+	}
+
+	public List<TaskRow> getRows() {
 		return rows;
 	}
 
-	public int getPeriodInDays() {
-		return periodInDays;
+	public void setRows(List<TaskRow> rows) {
+		this.rows = rows;
+	}
+
+	public void setPeriodInDays(int periodInDays) {
+		this.periodInDays = periodInDays;
 	}
 	
 }

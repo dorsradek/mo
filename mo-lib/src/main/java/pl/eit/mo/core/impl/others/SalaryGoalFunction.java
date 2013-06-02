@@ -19,8 +19,8 @@ public class SalaryGoalFunction extends IGoalFunction{
 			int projectDurationInDays = 0;
 			// szukam najdalej wysunietej jedynki sposrod wszystkich 
 			// zadan kazdego projektu
-			for(int rowId=0; rowId < hrMatrix.getTaskRowsData().size(); rowId++){
-				TaskRow row = hrMatrix.getTaskRowsData().get(rowId);
+			for(int rowId=0; rowId < hrMatrix.getRows().size(); rowId++){
+				TaskRow row = hrMatrix.getRows().get(rowId);
 				if(row.getProjectName().equals(project.name)){
 					int day = 0;
 					ScheduleField scheduleField = hrMatrix.getDay(day).getScheduleFields().get(rowId);

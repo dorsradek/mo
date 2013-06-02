@@ -28,7 +28,7 @@ public class HRUtil {
 				probeNumber++;
 				List<Integer> faults = new ArrayList<Integer>();
 				for(IValidator validator : validators){
-					List<Integer> tmpFaults = validator.excecute(daySchedule, tmpHrMatrix.getTaskRowsData());
+					List<Integer> tmpFaults = validator.excecute(daySchedule, tmpHrMatrix.getRows());
 					// scalam listy (bez duplikatow)
 					Set setboth = new HashSet(faults);
 					setboth.addAll(tmpFaults);

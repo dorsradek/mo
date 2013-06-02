@@ -16,7 +16,7 @@ public class RandRandEmployeeMovement extends IMovement{
 	
 	public RandRandEmployeeMovement() {
 		randomGenerator = new Random();
-		this.name = "RandRandMovement";
+		this.name = "RandRandEmployeeMovement";
 	}
 	
 	/** algorytm przenosi losowego pracownika z losowego pola w losowe miejsce */

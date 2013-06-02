@@ -106,7 +106,7 @@ public class HRAllocator {
 						Taboo newTaboo = null;
 						while(!isSuccessful && movement.getMaxNumberOfMovementProbes() > probe){
 							isSuccessful = movement.tryExcecute(hrMatrix, day, 
-									hrMatrix.getTaskRowsData(), taboos);
+									hrMatrix.getRows(), taboos);
 							if(!isSuccessful){
 								outputData.incrementWrongMovementExcecutes();
 							}else{
