@@ -1,6 +1,7 @@
 package pl.eit.mo.core.others;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -15,11 +16,23 @@ public class DaySchedule  implements Serializable{
 	
 	/** mapa z polami charakterystycznymi dla kazdego projektu, etapu i zadania */
 	private List<ScheduleField> scheduleFields;
+	
+	public DaySchedule() {
+		scheduleFields = new ArrayList<ScheduleField>();
+		randomGenerator = new Random();
+	}
 
 	public DaySchedule(List<ScheduleField> scheduleFields) {
-		super();
+		this();
 		this.scheduleFields = scheduleFields;
-		randomGenerator = new Random();
+	}
+	
+	public DaySchedule getCopy() {
+		DaySchedule newDaySchedule = new DaySchedule();
+		for(int i=0; i<scheduleFields.size(); i++){
+			newDaySchedule.getScheduleFields().add(scheduleFields.get(i).getCopy());
+		}
+		return newDaySchedule;
 	}
 
 	/** zwracam losowe pole z tego dnia */

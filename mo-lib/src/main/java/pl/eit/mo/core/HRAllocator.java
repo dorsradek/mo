@@ -143,16 +143,17 @@ public class HRAllocator {
 									}else{
 										// naprawa sie nie udala wiec wracam do zmodyfikowanej 
 										// macierzy - bede ja dalej naprawiac
-										hrMatrix = modifiedHrMatrix.getCopy();
 										outputData.incrementWrongRapairs();
 										outputData.getGoalFunctionValues().add(-1.0);
 									}
+									// zawsze wracam do zmodyfikowanej poniewaz chce naprawiac od poczatku
+									hrMatrix = modifiedHrMatrix.getCopy();
 								}								
 							}
 							
 							// zanim zrobie put musze policzyc jakosc zabronienia
 							// oraz czas przez ktory nie bede mogl go ruszac
-							if(newTaboo != null && repairSuccessful){
+							if(newTaboo != null && bestRepairedHrMatrix!=null){
 								// ustawiam jak dlugo ruch bedzie na liscie tabu
 								// w tym celu licze jak dobry byl to ruch
 								int numberOfRoundsToRemove = getMovementTabooIterations(movement, 
@@ -162,8 +163,8 @@ public class HRAllocator {
 							}
 							
 							// zachowuje wynik iteracji
-							if(repairSuccessful){
-								hrMatrix = bestRepairedHrMatrix.getCopy();
+							if(bestRepairedHrMatrix!=null){
+								hrMatrix = bestRepairedHrMatrix;
 								if(goalValue > outputData.getBestGoalFunctionValue()){
 									outputData.setBestSchedule(bestRepairedHrMatrix);
 									outputData.setBestGoalFunctionValue(goalValue);

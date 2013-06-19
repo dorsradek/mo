@@ -1,14 +1,10 @@
 package pl.eit.mo.core;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import pl.eit.mo.core.others.DaySchedule;
-import pl.eit.mo.core.others.FastByteArrayOutputStream;
 import pl.eit.mo.core.others.ScheduleField;
 import pl.eit.mo.core.others.TaskRow;
 import pl.eit.mo.dto.Employee;
@@ -22,13 +18,8 @@ import pl.eit.mo.dto.Task;
 
 public class HRMatrix implements Serializable{
 	
-	private static int SHOW_GANTT_CHART = 0;
-	private static int SHOW_SCHEDULE = 1;
-	
 	private static int NUM_OF_EXCEC_COPIES = 0;
 	private static double TIME_OF_COPIES_IN_MILIS = 0;
-	
-	private static int CHOOSE_ACTION = SHOW_SCHEDULE;
 	
 	/** harmonogram */
 	private List<DaySchedule> schedule;
@@ -80,12 +71,17 @@ public class HRMatrix implements Serializable{
 	
 	/** zwraca kopie samego siebie */
 	public HRMatrix getCopy() {
-		long copyStartTime = System.currentTimeMillis();
+		//long copyStartTime = System.currentTimeMillis();
+		
 		HRMatrix newHRMatrix = new HRMatrix();
 		newHRMatrix.setPeriodInDays(this.periodInDays);
 		newHRMatrix.setEmployees(this.employees);
 		for(TaskRow row : rows){
 			newHRMatrix.getRows().add(row.getCopy());
+		}
+		
+		for(DaySchedule daySchedule : schedule){
+			newHRMatrix.getSchedule().add(daySchedule.getCopy());
 		}
 		
         /*try {
@@ -105,11 +101,11 @@ public class HRMatrix implements Serializable{
         }
         catch(ClassNotFoundException cnfe) {
             cnfe.printStackTrace();
-        }*/
+        }
 		
 		long copyTime = System.currentTimeMillis() - copyStartTime;
         NUM_OF_EXCEC_COPIES++;
-        TIME_OF_COPIES_IN_MILIS += copyTime;
+        TIME_OF_COPIES_IN_MILIS += copyTime;*/
 		return newHRMatrix;
 	}
 	
@@ -131,6 +127,8 @@ public class HRMatrix implements Serializable{
 				// ustawiam ze skonczono prace nad zadaniem
 				if(allWorkDoneInCurrDay >=  rows.get(field).getDurationTime()){
 					currDay.getScheduleFields().get(field).setTaskFinished(true);
+				}else{
+					currDay.getScheduleFields().get(field).setTaskFinished(false);
 				}
 					
 			}
@@ -139,32 +137,76 @@ public class HRMatrix implements Serializable{
 			// nie jest to potrzebne
 			DaySchedule currDay = schedule.get(0);
 			currDay.recalculateWorkDone(rows, employees);
+			for(int field=0; field < currDay.getScheduleFields().size(); field++){
+				if(currDay.getScheduleFields().get(field).getWorkDone() >=  rows.get(field).getDurationTime()){
+					currDay.getScheduleFields().get(field).setTaskFinished(true);
+				}else{
+					currDay.getScheduleFields().get(field).setTaskFinished(false);
+				}
+			}
 		}
 	}
 	
 	@Override
 	public String toString() {
 		String result = "";
-		for(int j=0;j<rows.size();j++){
-			for(int i=0;i<schedule.size();i++){
-				ScheduleField field = schedule.get(i).getScheduleFields().get(j);
-				String word="";
-				if(CHOOSE_ACTION == SHOW_SCHEDULE){
-					word = getEmployeesToString(field);
-					result += word;
-					result += "\t";
-				}else if(CHOOSE_ACTION == SHOW_GANTT_CHART){
-					if(field.isTaskFinished() == false 
-							&& field.getWorkDone() > 0){
-						word = "--";
-					}else{
-						word = "  ";
-					}
-					result += word;
+		String word = "";
+		ScheduleField prevTaskField = null;
+		for(int taskIndex=0;taskIndex<rows.size();taskIndex++){
+			for(int day=0;day<schedule.size();day++){
+				ScheduleField taskField = schedule.get(day).getScheduleFields().get(taskIndex);
+				if(day>0){
+					prevTaskField = schedule.get(day-1).getScheduleFields().get(taskIndex);
 				}
+				word="";
+				word = getEmployeesToString(taskField);
+				result += word;
+				result += "\t";
 			}
 			result += "\n";
 		}
+		result += "\n";
+		prevTaskField = null;
+		for(int taskIndex=0;taskIndex<rows.size();taskIndex++){
+			for(int day=0;day<schedule.size();day++){
+				ScheduleField taskField = schedule.get(day).getScheduleFields().get(taskIndex);
+				if(day>0){
+					prevTaskField = schedule.get(day-1).getScheduleFields().get(taskIndex);
+				}
+				word="";
+				if(taskField.isTaskFinished() == false 
+						&& taskField.getEmployees().size() > 0
+						&& day == 0){
+					word = "+";
+				}else if(day != 0
+						&& prevTaskField.isTaskFinished() == false 
+						&& taskField.getEmployees().size() > 0){
+					word = "+";	
+				}else if(taskField.isTaskFinished() == false 
+						&& taskField.getWorkDone() > 0 ){
+					word = "-";
+				}else{
+					word = " ";
+				}
+				result += word;
+			}
+			result += "\n";
+		}
+		
+		result += "\n";
+		prevTaskField = null;
+		for(int taskIndex=0;taskIndex<rows.size();taskIndex++){
+			for(int day=0;day<schedule.size();day++){
+				ScheduleField taskField = schedule.get(day).getScheduleFields().get(taskIndex);
+				if(day>0){
+					prevTaskField = schedule.get(day-1).getScheduleFields().get(taskIndex);
+				}
+				result += String.format("%.1f", taskField.getWorkDone());
+				result += "\t";
+			}
+			result += "\n";
+		}
+		
 		return result;
 	}
 
@@ -178,7 +220,7 @@ public class HRMatrix implements Serializable{
 				word += emplId+",";
 			}
 		}
-		while(word.length() < (rows.size()-2)){
+		while(word.length() < (rows.size())){
 			word += " ";
 		}
 		return word;

@@ -50,7 +50,7 @@ public class OutputData {
 	}
 
 	public void setBestSchedule(HRMatrix bestSchedule) {
-		this.bestSchedule = bestSchedule;
+		this.bestSchedule = bestSchedule.getCopy();
 	}
 
 	public void setBestGoalFunctionValue(double bestGoalFunctionValue) {

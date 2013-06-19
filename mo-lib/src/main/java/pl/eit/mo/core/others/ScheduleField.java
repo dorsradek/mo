@@ -22,12 +22,22 @@ public class ScheduleField implements Serializable{
 	private float workDone;
 	
 	/** zmienna okreslajaca czy zadanie zostalo juz ukonczone */
-	private boolean isTaskFinished;
+	private int isTaskFinished;
 	
 	public ScheduleField() {
 		super();
 		this.employees = new ArrayList<Integer>();
 		workDone = 0;
+		setTaskFinished(false);
+	}
+	
+	public ScheduleField getCopy() {
+		ScheduleField newScheduleField = new ScheduleField();
+		newScheduleField.setWorkDone(workDone);
+		List newList = new ArrayList<Integer>(employees);
+		newScheduleField.setEmployees(newList);
+		newScheduleField.setTaskFinished(isTaskFinished());
+		return newScheduleField;
 	}
 
 	/** rekalkuluje prace wykonana w tym polu */
@@ -79,11 +89,18 @@ public class ScheduleField implements Serializable{
 	}
 
 	public boolean isTaskFinished() {
-		return isTaskFinished;
+		if(this.isTaskFinished == 0){
+			return false;
+		}
+		return true;
 	}
 
 	public void setTaskFinished(boolean isTaskFinished) {
-		this.isTaskFinished = isTaskFinished;
+		if(isTaskFinished){
+			this.isTaskFinished = 1;
+		}else{
+			this.isTaskFinished = 0;
+		}
 	}
 
 }

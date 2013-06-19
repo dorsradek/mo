@@ -23,12 +23,25 @@ public class TaskRow implements Serializable{
 	/** czas jaki trzeba poswiecic aby ukonczyc zadanie */
 	private double durationTime;
 	
+	public TaskRow() {
+	}
+	
 	public TaskRow(Project project, Phase phase, Task task) {
 		projectName = project.getName();
 		phaseName = phase.getName();
 		taskName = task.getName();
 		requiredSkill = task.getRequiredSkill();
 		durationTime = task.getDurationTime();
+	}
+	
+	public TaskRow getCopy() {
+		TaskRow newTaskRow = new TaskRow();
+		newTaskRow.setDurationTime(durationTime);
+		newTaskRow.setPhaseName(phaseName);
+		newTaskRow.setProjectName(projectName);
+		newTaskRow.setRequiredSkill(requiredSkill);
+		newTaskRow.setTaskName(taskName);
+		return newTaskRow;
 	}
 
 	public String getProjectName() {
@@ -49,6 +62,26 @@ public class TaskRow implements Serializable{
 
 	public double getDurationTime() {
 		return durationTime;
+	}
+
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
+	}
+
+	public void setPhaseName(String phaseName) {
+		this.phaseName = phaseName;
+	}
+
+	public void setTaskName(String taskName) {
+		this.taskName = taskName;
+	}
+
+	public void setRequiredSkill(String requiredSkill) {
+		this.requiredSkill = requiredSkill;
+	}
+
+	public void setDurationTime(double durationTime) {
+		this.durationTime = durationTime;
 	}
 
 }
