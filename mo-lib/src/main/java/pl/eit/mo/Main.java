@@ -195,11 +195,11 @@ public class Main {
 		repairAlgorithm1.setNumberOfRepairsProbes(1);
 		
 		List<IMovement> movements = new ArrayList<IMovement>();
-		IMovement movement1 = new InteligentRandEmployeeMovement(); 
+		IMovement movement1 = new InteligentRandEmployeeMovement(10); 
 		movement1.setMaxNumberOfMovementProbes(5);
 		movement1.setNumberOfActionsInDay(10);
-		movement1.setWeakMovementTabooIterations(0);
-		movement1.setMediumMovementTabooIterations(0);
+		movement1.setWeakMovementTabooIterations(1);
+		movement1.setMediumMovementTabooIterations(1);
 		movement1.setGoodMovementTabooIterations(2);
 		movement1.setTheBestMovementTabooIterations(3);
 		movements.add(movement1);
@@ -214,7 +214,6 @@ public class Main {
 		ha.setMovements(movements);
 		ha.setRepairAlgorithms(repairAlgorithms);
 		ha.setValidators(validators);
-		//TODO: ile iteracji calego algorytmu bez podstawiania od nowa wejsciowej
 		ha.setNumberOfIterations(1);
 		ha.excecute();
 

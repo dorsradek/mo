@@ -14,9 +14,12 @@ public class InteligentRandEmployeeMovement extends IMovement{
 	
 	private Random randomGenerator;
 	
-	public InteligentRandEmployeeMovement() {
+	private int numOfChooseProbesOfDestField;
+	
+	public InteligentRandEmployeeMovement(int numOfChooseProbesOfDestField) {
 		randomGenerator = new Random();
 		this.name = "InteligentRandEmployeeMovement";
+		this.numOfChooseProbesOfDestField = numOfChooseProbesOfDestField;
 	}
 	
 	/** algorytm przenosi losowego pracownika z losowego pola w losowe miejsce
@@ -40,9 +43,8 @@ public class InteligentRandEmployeeMovement extends IMovement{
 		int destFieldIndex = randomGenerator.nextInt(currDay.getScheduleFields().size());
 		ScheduleField destField = currDay.getScheduleFields().get(destFieldIndex);
 		
-		int numOfChooseDestField = 10;
 		int currProbe = 0;
-		while(destField.isTaskFinished() && currProbe < numOfChooseDestField){
+		while(destField.isTaskFinished() && currProbe < numOfChooseProbesOfDestField){
 			destFieldIndex = randomGenerator.nextInt(currDay.getScheduleFields().size());
 			destField = currDay.getScheduleFields().get(destFieldIndex);
 			currProbe++;
