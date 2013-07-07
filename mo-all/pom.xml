@@ -9,7 +9,7 @@
 	<packaging>pom</packaging>
 	
 	<modules>
-		<module>../mo-app</module>
 		<module>../mo-lib</module>
+		<module>../mo-app</module>
 	</modules>
 </project>
