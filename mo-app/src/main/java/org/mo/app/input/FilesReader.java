@@ -4,16 +4,14 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-import pl.eit.mo.dto.Employee;
-import pl.eit.mo.dto.Project;
-
 public class FilesReader {
 
 	private String filename;
 
 	public void readEmployees() throws IOException {
 
-		this.filename = "D:\\Radek\\Nauka\\mo\\mo-lib\\employees.txt";
+		this.filename = this.getClass().getClassLoader()
+				.getResource("employees.txt").getPath();
 		BufferedReader br = new BufferedReader(new FileReader(filename));
 		EmployeesReader e = null;
 		try {
@@ -28,14 +26,12 @@ public class FilesReader {
 		} finally {
 			br.close();
 		}
-		for (Employee employee : e.employees) {
-			System.out.println(employee);
-		}
 	}
 
 	public void readProjects() throws IOException {
 
-		this.filename = "D:\\Radek\\Nauka\\mo\\mo-lib\\projects.txt";
+		this.filename = this.getClass().getClassLoader()
+				.getResource("projects.txt").getPath();
 		BufferedReader br = new BufferedReader(new FileReader(filename));
 		ProjectsReader e = null;
 		try {
@@ -49,9 +45,6 @@ public class FilesReader {
 			}
 		} finally {
 			br.close();
-		}
-		for (Project project : e.projects) {
-			System.out.println(project);
 		}
 	}
 }
