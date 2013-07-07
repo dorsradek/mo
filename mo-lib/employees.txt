@@ -1,0 +1,4 @@
+emp1|Java:1.0|SQL:0.8|HTML:0.8|JavaScript:0.2
+emp2|Java:0.8|SQL:0.2|HTML:0.5|JavaScript:0.2
+emp3|Java:0.6|SQL:0.3|HTML:0.8|JavaScript:0.6
+emp4|Java:0.6|SQL:0.8|HTML:0.4|JavaScript:0.4

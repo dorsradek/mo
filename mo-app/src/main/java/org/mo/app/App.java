@@ -1,13 +1,13 @@
 package org.mo.app;
 
-/**
- * Hello world!
- *
- */
-public class App 
-{
-    public static void main( String[] args )
-    {
-        System.out.println( "Hello World!" );
-    }
+import java.io.IOException;
+
+import org.mo.app.input.FilesReader;
+
+public class App {
+	public static void main(String[] args) throws IOException {
+		FilesReader filesReader = new FilesReader();
+		filesReader.readEmployees();
+		filesReader.readProjects();
+	}
 }
