@@ -26,6 +26,9 @@ public class Project
 	/** wynagrodzenie za ukonczony projekt */
 	private double salary;
 	
+	public Project() {
+	}
+	
 	public Project(String name) {
 		this.name = name;
 	}
@@ -72,6 +75,10 @@ public class Project
 
 	public String getName() {
 		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }

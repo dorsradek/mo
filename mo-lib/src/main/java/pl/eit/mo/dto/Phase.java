@@ -9,6 +9,15 @@ public class Phase
 	
 	/** lista zadan */
 	private List<Task> tasks;
+	
+	public Phase() {
+		super();
+	}
+	
+	public Phase(String name) {
+		super();
+		this.name = name;
+	}
 
 	public Phase(String name, List<Task> tasks) {
 		super();
@@ -22,6 +31,14 @@ public class Phase
 
 	public String getName() {
 		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setTasks(List<Task> tasks) {
+		this.tasks = tasks;
 	}
 
 }
