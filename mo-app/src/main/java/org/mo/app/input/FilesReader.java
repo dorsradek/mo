@@ -3,12 +3,16 @@ package org.mo.app.input;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
+
+import pl.eit.mo.dto.Employee;
+import pl.eit.mo.dto.Project;
 
 public class FilesReader {
 
 	private String filename;
 
-	public void readEmployees() throws IOException {
+	public List<Employee> readEmployees() throws IOException {
 
 		this.filename = this.getClass().getClassLoader()
 				.getResource("employees.txt").getPath();
@@ -26,9 +30,10 @@ public class FilesReader {
 		} finally {
 			br.close();
 		}
+		return e.employees;
 	}
 
-	public void readProjects() throws IOException {
+	public List<Project> readProjects() throws IOException {
 
 		this.filename = this.getClass().getClassLoader()
 				.getResource("projects.txt").getPath();
@@ -46,5 +51,6 @@ public class FilesReader {
 		} finally {
 			br.close();
 		}
+		return e.projects;
 	}
 }
