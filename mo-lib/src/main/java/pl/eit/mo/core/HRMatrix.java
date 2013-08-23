@@ -263,4 +263,48 @@ public class HRMatrix implements Serializable{
 		this.periodInDays = periodInDays;
 	}
 	
+	public void asd() {
+		String result = "";
+		String word = "";
+		ScheduleField prevTaskField = null;
+		for(int taskIndex=0;taskIndex<rows.size();taskIndex++){
+			int start = 0;
+			int end = 0;
+			boolean can = true;
+			boolean endcan = true;
+			for(int day=0;day<schedule.size();day++){
+				ScheduleField taskField = schedule.get(day).getScheduleFields().get(taskIndex);
+				if(day>0){
+					prevTaskField = schedule.get(day-1).getScheduleFields().get(taskIndex);
+				}
+				word="";
+				if(taskField.isTaskFinished() == false 
+						&& taskField.getEmployees().size() > 0
+						&& day == 0){
+					if (can) {
+						start = day;
+						can = false;
+					}
+				}else if(day != 0
+						&& prevTaskField.isTaskFinished() == false 
+						&& taskField.getEmployees().size() > 0){
+					word = "+";
+					if (can) {
+						start = day;
+						can = false;
+					}
+				}else if(taskField.isTaskFinished() == true){
+					if (endcan) {
+						end = day;
+						endcan = false;
+					}
+				}else{
+					word = " ";
+				}
+				result += word;
+			}
+			System.out.println(taskIndex + " start: " + start + " end: " + end);
+			result += "\n";
+		}
+	}
 }
