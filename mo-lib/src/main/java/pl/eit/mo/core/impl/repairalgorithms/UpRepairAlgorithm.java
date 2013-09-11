@@ -12,6 +12,11 @@ import pl.eit.mo.core.others.ScheduleField;
 
 public class UpRepairAlgorithm extends IRepairAlgorithm {
 
+	public UpRepairAlgorithm() {
+		super();
+		this.name = "UpRepairAlgorithm";
+	}
+	
 	@Override
 	public void excecute(List<ScheduleField> scheduleFields, List<Integer> faults) {
 		

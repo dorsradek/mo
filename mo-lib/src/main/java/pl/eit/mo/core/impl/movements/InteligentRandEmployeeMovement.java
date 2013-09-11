@@ -14,12 +14,12 @@ public class InteligentRandEmployeeMovement extends IMovement{
 	
 	private Random randomGenerator;
 	
-	private int numOfChooseProbesOfDestField;
+	private int numOfChooseProbesOfDestField = 1;
 	
 	public InteligentRandEmployeeMovement(int numOfChooseProbesOfDestField) {
 		randomGenerator = new Random();
 		this.name = "InteligentRandEmployeeMovement";
-		this.numOfChooseProbesOfDestField = numOfChooseProbesOfDestField;
+		this.numOfChooseProbesOfDestField = 1;
 	}
 	
 	/** algorytm przenosi losowego pracownika z losowego pola w losowe miejsce

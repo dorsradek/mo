@@ -81,11 +81,13 @@ public class HRAllocator {
 		this.inputData = inputData;
 	}
 	
-	/** glowna metoda klasy. realizuje algorytm Taboo Search */
-	public void excecute(){
+	/** glowna metoda klasy. realizuje algorytm Taboo Search 
+	 * @throws Exception */
+	public void excecute() throws Exception{
 		outputData = new OutputData();
 		HRMatrix startMatrix = hrMatrix;
 		for(int iter=0; iter < numberOfIterations; iter++){
+			
 			hrMatrix = startMatrix.getCopy();
 			// wykonuje kazdy ruch na liscie
 			for(IMovement movement : movements){

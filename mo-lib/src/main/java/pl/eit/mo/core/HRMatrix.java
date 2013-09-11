@@ -7,6 +7,7 @@ import java.util.List;
 import pl.eit.mo.core.others.DaySchedule;
 import pl.eit.mo.core.others.ScheduleField;
 import pl.eit.mo.core.others.TaskRow;
+import pl.eit.mo.dto.Dupa;
 import pl.eit.mo.dto.Employee;
 import pl.eit.mo.dto.InputData;
 import pl.eit.mo.dto.Phase;
@@ -262,12 +263,19 @@ public class HRMatrix implements Serializable{
 	public void setPeriodInDays(int periodInDays) {
 		this.periodInDays = periodInDays;
 	}
+	public static List<Dupa> dupas = new ArrayList<Dupa>();
 	
 	public void asd() {
+		dupas = new ArrayList<Dupa>();
 		String result = "";
 		String word = "";
 		ScheduleField prevTaskField = null;
+		
 		for(int taskIndex=0;taskIndex<rows.size();taskIndex++){
+			String projectName = rows.get(taskIndex).getProjectName();
+			String phaseName = rows.get(taskIndex).getPhaseName();
+			String taskName = rows.get(taskIndex).getTaskName();
+			String taskFullName = "P-" + projectName + " F-" + phaseName + " T-" + taskName;
 			int start = 0;
 			int end = 0;
 			boolean can = true;
@@ -304,6 +312,11 @@ public class HRMatrix implements Serializable{
 				result += word;
 			}
 			System.out.println(taskIndex + " start: " + start + " end: " + end);
+			Dupa dupa = new Dupa();
+			dupa.name = taskFullName;
+			dupa.start = start;
+			dupa.end = end;
+			dupas.add(dupa);
 			result += "\n";
 		}
 	}

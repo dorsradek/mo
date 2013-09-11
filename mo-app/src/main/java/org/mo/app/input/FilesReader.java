@@ -14,8 +14,7 @@ public class FilesReader {
 
 	public List<Employee> readEmployees() throws IOException {
 
-		this.filename = this.getClass().getClassLoader()
-				.getResource("employees.txt").getPath();
+		this.filename = "employees.txt";
 		BufferedReader br = new BufferedReader(new FileReader(filename));
 		EmployeesReader e = null;
 		try {
@@ -35,8 +34,7 @@ public class FilesReader {
 
 	public List<Project> readProjects() throws IOException {
 
-		this.filename = this.getClass().getClassLoader()
-				.getResource("projects.txt").getPath();
+		this.filename = "projects.txt";
 		BufferedReader br = new BufferedReader(new FileReader(filename));
 		ProjectsReader e = null;
 		try {

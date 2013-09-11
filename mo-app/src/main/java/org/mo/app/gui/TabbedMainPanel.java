@@ -11,18 +11,21 @@ import javax.swing.JTabbedPane;
 @SuppressWarnings("serial")
 public class TabbedMainPanel extends JTabbedPane {
 
+	public static GanttChartPanel ganttChart = new GanttChartPanel();
+	public static OtherChartPanel otherChart = new OtherChartPanel();
+	public static JPanel inputData = new InputDataPanel();
+	
 	public TabbedMainPanel() {
-		JPanel ganttChart = new GanttChartPanel();
 		
-		
-		this.addTab("Okno podstawowe", new JLabel("asd"));
+		this.addTab("Okno podstawowe", inputData);
 		this.setMnemonicAt(0, KeyEvent.VK_1);
 
 		this.addTab("Wykres Gantta", ganttChart);
 		this.setMnemonicAt(1, KeyEvent.VK_2);
 
-		this.addTab("Inny wykres", new JLabel("qwe"));
+		this.addTab("Wykres funkcji celu", otherChart);
 		this.setMnemonicAt(2, KeyEvent.VK_3);
+		
 		this.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 	}
 

@@ -26,7 +26,7 @@ public abstract class  IGoalFunction {
 		
 	}
 	
-	public abstract double getValue(HRMatrix hrMatrix);
+	public abstract double getValue(HRMatrix hrMatrix) throws Exception;
 	
 	protected class ProjectInfo{
 		public String name;

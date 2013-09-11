@@ -14,6 +14,11 @@ public class RandRepairAlgorithm extends IRepairAlgorithm {
 	
 	private Random randomGenerator;
 	
+	public RandRepairAlgorithm() {
+		super();
+		this.name = "RandRepairAlgorithm";
+	}
+
 	@Override
 	public void excecute(List<ScheduleField> scheduleFields, List<Integer> faults) {
 		randomGenerator = new Random();
